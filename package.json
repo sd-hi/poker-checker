@@ -1,0 +1,13 @@
+{
+  "name": "poker-checker",
+  "version": "1.0.0",
+  "description": "Check results of poker games",
+  "main": "index.js",
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
+  "devDependencies": {
+    "lerna": "^4.0.0"
+  }
+}

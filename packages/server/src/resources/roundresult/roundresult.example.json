@@ -1,0 +1,52 @@
+{
+  "river": {
+    "cards": [
+      {
+        "suit": "C",
+        "rank": "A"
+      },
+      {
+        "suit": "C",
+        "rank": "2"
+      },
+      {
+        "suit": "C",
+        "rank": "3"
+      },
+      {
+        "suit": "C",
+        "rank": "4"
+      },
+      {
+        "suit": "C",
+        "rank": "5"
+      }
+    ]
+  },
+  "playerA": {
+    "name": "Tom",
+    "cards": [
+      {
+        "suit": "D",
+        "rank": "5"
+      },
+      {
+        "suit": "D",
+        "rank": "6"
+      }
+    ]
+  },
+  "playerB": {
+    "name": "Stella",
+    "cards": [
+      {
+        "suit": "S",
+        "rank": "Q"
+      },
+      {
+        "suit": "H",
+        "rank": "K"
+      }
+    ]
+  }
+}
