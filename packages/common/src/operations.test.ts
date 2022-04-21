@@ -1,6 +1,12 @@
-import { Suit, Rank, PokerHandResult, PokerWinner } from "./const";
+import { Language, Suit, Rank, PokerHandResult, PokerWinner } from "./const";
 import { Card } from "./classes";
-import { initializePokerHandState, initializePokerRoundState, PokerHandState, PokerRoundState } from "./interfaces";
+import {
+  initializePokerHandState,
+  initializePokerRoundState,
+  PokerHandState,
+  PokerRoundState,
+} from "./interfaces";
+import { describePokerHandState, describePokerRoundResult } from "./language";
 import {
   detectPokerHandResult,
   detectPokerHandResult_Detect_Duplicates,
@@ -14,9 +20,6 @@ import {
   rankValue,
   removeDuplicateRankCards,
   identifyPokerWinner,
-  describePokerHandState,
-  describeCard,
-  describePokerRoundResult,
 } from "./operations";
 
 describe("rankValue suite", () => {
@@ -305,7 +308,7 @@ describe("detectPokerHandResult suite", () => {
     expect(state.finalResultRanks).toEqual([]);
     expect(state.finalResultTieBreakCards).toEqual([]);
 
-    expect(describePokerHandState(state)).toEqual("None");
+    expect(describePokerHandState(Language.English, state)).toEqual("None");
   });
 
   test("royal flush, with two pairs", () => {
@@ -333,7 +336,9 @@ describe("detectPokerHandResult suite", () => {
     expect(state.finalResultRanks[0]).toEqual(Rank.Ace);
     expect(state.finalResultTieBreakCards).toEqual([]);
 
-    expect(describePokerHandState(state)).toEqual("Royal Flush of Spades");
+    expect(describePokerHandState(Language.English, state)).toEqual(
+      "Royal Flush of Spades"
+    );
   });
 
   test("straight flush, with two pairs", () => {
@@ -360,7 +365,7 @@ describe("detectPokerHandResult suite", () => {
     expect(state.finalResultRanks.length).toEqual(1);
     expect(state.finalResultRanks[0]).toEqual(Rank.Five);
 
-    expect(describePokerHandState(state)).toEqual(
+    expect(describePokerHandState(Language.English, state)).toEqual(
       "Straight Flush of Spades with high card of Five"
     );
   });
@@ -385,7 +390,9 @@ describe("detectPokerHandResult suite", () => {
     expect(state.finalResultRanks.length).toEqual(1);
     expect(state.finalResultRanks[0]).toEqual(Rank.Two);
 
-    expect(describePokerHandState(state)).toEqual("Four of a Kind of Two");
+    expect(describePokerHandState(Language.English, state)).toEqual(
+      "Four of a Kind of Two"
+    );
   });
 
   test("full house, with two pairs", () => {
@@ -410,7 +417,9 @@ describe("detectPokerHandResult suite", () => {
     expect(state.finalResultRanks[0]).toEqual(Rank.Two);
     expect(state.finalResultRanks[1]).toEqual(Rank.King);
 
-    expect(describePokerHandState(state)).toEqual("Full House of Two and King");
+    expect(describePokerHandState(Language.English, state)).toEqual(
+      "Full House of Two and King"
+    );
   });
 
   test("flush, with non-suited straight", () => {
@@ -441,7 +450,7 @@ describe("detectPokerHandResult suite", () => {
     expect(state.finalResultRanks[3]).toEqual(Rank.Five);
     expect(state.finalResultRanks[4]).toEqual(Rank.Three);
 
-    expect(describePokerHandState(state)).toEqual(
+    expect(describePokerHandState(Language.English, state)).toEqual(
       "Flush of Spades with high card of Ace"
     );
   });
@@ -467,7 +476,7 @@ describe("detectPokerHandResult suite", () => {
     expect(state.finalResultRanks.length).toEqual(1);
     expect(state.finalResultRanks[0]).toEqual(Rank.Five);
 
-    expect(describePokerHandState(state)).toEqual(
+    expect(describePokerHandState(Language.English, state)).toEqual(
       "Straight with high card of Five"
     );
   });
@@ -491,7 +500,9 @@ describe("detectPokerHandResult suite", () => {
     expect(state.finalResultRanks.length).toEqual(1);
     expect(state.finalResultRanks[0]).toEqual(Rank.Queen);
 
-    expect(describePokerHandState(state)).toEqual("Three of a Kind of Queen");
+    expect(describePokerHandState(Language.English, state)).toEqual(
+      "Three of a Kind of Queen"
+    );
   });
 
   test("two pair, with extra pair", () => {
@@ -515,7 +526,9 @@ describe("detectPokerHandResult suite", () => {
     expect(state.finalResultRanks[0]).toEqual(Rank.Ace);
     expect(state.finalResultRanks[1]).toEqual(Rank.King);
 
-    expect(describePokerHandState(state)).toEqual("Two Pair of Ace and King");
+    expect(describePokerHandState(Language.English, state)).toEqual(
+      "Two Pair of Ace and King"
+    );
   });
 
   test("single pair", () => {
@@ -536,7 +549,9 @@ describe("detectPokerHandResult suite", () => {
     expect(state.finalResultRanks.length).toEqual(1);
     expect(state.finalResultRanks[0]).toEqual(Rank.Two);
 
-    expect(describePokerHandState(state)).toEqual("Pair of Two");
+    expect(describePokerHandState(Language.English, state)).toEqual(
+      "Pair of Two"
+    );
   });
 
   test("high card", () => {
@@ -564,7 +579,9 @@ describe("detectPokerHandResult suite", () => {
     expect(state.finalResultRanks[3]).toEqual(Rank.Jack);
     expect(state.finalResultRanks[4]).toEqual(Rank.Six);
 
-    expect(describePokerHandState(state)).toEqual("High Card of Ace");
+    expect(describePokerHandState(Language.English, state)).toEqual(
+      "High Card of Ace"
+    );
   });
 });
 
@@ -1314,7 +1331,7 @@ describe("identifyPokerWinner suite", () => {
     );
 
     expect(roundState.tieBreakerUsed).toBe(true);
-    expect(describePokerRoundResult(roundState)).toBe(
+    expect(describePokerRoundResult(Language.English, roundState)).toBe(
       "Tie was broken by Ace of Hearts which beat King of Spades"
     );
   });
@@ -1346,7 +1363,7 @@ describe("identifyPokerWinner suite", () => {
     );
 
     expect(roundState.tieBreakerUsed).toBe(true);
-    expect(describePokerRoundResult(roundState)).toBe(
+    expect(describePokerRoundResult(Language.English, roundState)).toBe(
       "Tie was broken by Ten of Hearts which beat Nine of Spades"
     );
   });
@@ -1428,7 +1445,7 @@ describe("identifyPokerWinner suite", () => {
     expect(roundState.handStateB.finalResult).toBe(PokerHandResult.TwoPair);
 
     expect(roundState.tieBreakerUsed).toBe(true);
-    expect(describePokerRoundResult(roundState)).toBe(
+    expect(describePokerRoundResult(Language.English, roundState)).toBe(
       "Tie was broken by Ten of Hearts which beat Eight of Diamonds"
     );
   });
@@ -1506,7 +1523,7 @@ describe("identifyPokerWinner suite", () => {
     expect(roundState.handStateB.finalResult).toBe(PokerHandResult.Pair);
 
     expect(roundState.tieBreakerUsed).toBe(true);
-    expect(describePokerRoundResult(roundState)).toBe(
+    expect(describePokerRoundResult(Language.English, roundState)).toBe(
       "Tie was broken by Queen of Hearts which beat Jack of Diamonds"
     );
   });
@@ -1534,7 +1551,7 @@ describe("identifyPokerWinner suite", () => {
     expect(roundState.handStateB.finalResult).toBe(PokerHandResult.Pair);
 
     expect(roundState.tieBreakerUsed).toBe(true);
-    expect(describePokerRoundResult(roundState)).toBe(
+    expect(describePokerRoundResult(Language.English, roundState)).toBe(
       "Tie was broken by Jack of Hearts which beat Ten of Clubs"
     );
   });
@@ -1562,7 +1579,7 @@ describe("identifyPokerWinner suite", () => {
     expect(roundState.handStateB.finalResult).toBe(PokerHandResult.Pair);
 
     expect(roundState.tieBreakerUsed).toBe(true);
-    expect(describePokerRoundResult(roundState)).toBe(
+    expect(describePokerRoundResult(Language.English, roundState)).toBe(
       "Tie was broken by Nine of Hearts which beat Eight of Diamonds"
     );
   });
@@ -1716,21 +1733,4 @@ describe("identifyPokerWinner suite", () => {
 
     expect(roundState.tieBreakerUsed).toBe(false);
   });
-});
-
-describe("describeCard suite", () => {
-  testDescribeCard(Suit.Club, Rank.Ace, "Ace of Clubs");
-  testDescribeCard(Suit.Diamond, Rank.Two, "Two of Diamonds");
-  testDescribeCard(Suit.Heart, Rank.Three, "Three of Hearts");
-  testDescribeCard(Suit.Spade, Rank.Four, "Four of Spades");
-
-  function testDescribeCard(
-    suit: Suit,
-    rank: Rank,
-    expectedDescription: string
-  ) {
-    test(expectedDescription, () => {
-      expect(describeCard(new Card(suit, rank))).toEqual(expectedDescription);
-    });
-  }
 });

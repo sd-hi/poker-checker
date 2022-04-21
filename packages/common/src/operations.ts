@@ -1,4 +1,5 @@
 import {
+  Language,
   Rank,
   Suit,
   PokerHandResult,
@@ -180,67 +181,6 @@ export function getMostFrequentSuit(cards: Array<Card>): Suit {
   }
 
   return mostFrequentSuit;
-}
-
-export function describeCard(card: Card | null): string {
-  // Describe given card as human friendly description
-  let description: string = "";
-
-  if (card === null) {
-    return "NULL CARD";
-  }
-
-  description += RankDescription.get(card.getRank());
-  description += " of ";
-  description += SuitDescription.get(card.getSuit());
-  description += "s";
-
-  return description;
-}
-
-export function describePokerHandState(state: PokerHandState): string {
-  // Describe the given poker hand result, assumes results have already been detected
-  let description: string = "";
-
-  // Describe result of hand
-  description += PokerHandResultDescription.get(state.finalResult);
-
-  switch (state.finalResult) {
-    case PokerHandResult.Flush:
-    case PokerHandResult.StraightFlush:
-      description +=
-        " of " + SuitDescription.get(state.finalResultCards[0].getSuit()) + "s";
-    case PokerHandResult.Straight:
-      // Results best described by their highest card
-      description +=
-        " with high card of " + RankDescription.get(state.finalResultRanks[0]);
-      break;
-    case PokerHandResult.HighCard:
-      // Result desribed by highest card
-      description += " of " + RankDescription.get(state.finalResultRanks[0]);
-      break;
-    case PokerHandResult.FourOfAKind:
-    case PokerHandResult.FullHouse:
-    case PokerHandResult.Pair:
-    case PokerHandResult.ThreeOfAKind:
-    case PokerHandResult.TwoPair:
-      // Results described by their duplicates
-      for (let i = 0; i < state.finalResultRanks.length; i++) {
-        if (i === 0) {
-          description += " of ";
-        } else {
-          description += " and ";
-        }
-        description += RankDescription.get(state.finalResultRanks[i]);
-      }
-      break;
-    case PokerHandResult.RoyalFlush:
-      // Results described by their suit
-      description +=
-        " of " + SuitDescription.get(state.finalResultCards[0].getSuit()) + "s";
-  }
-
-  return description;
 }
 
 export function detectPokerHandResult(
@@ -672,21 +612,6 @@ export function detectPokerHandResult_DetermineResultValue_Duplicates(
   }
 
   return duplicateRanks;
-}
-
-export function describePokerRoundResult(state: PokerRoundState): string {
-  // Describe the result of a given poker round
-  let description: string = "";
-
-  // Comment on the tie breaker
-  if (state.tieBreakerUsed) {
-    description += "Tie was broken by ";
-    description += describeCard(state.tieBreakerWinCard);
-    description += " which beat ";
-    description += describeCard(state.tieBreakerLossCard);
-  }
-
-  return description;
 }
 
 export function identifyPokerWinner(

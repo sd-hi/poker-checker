@@ -1,5 +1,9 @@
 // Constants
 
+export enum Language {
+  English = "en",
+}
+
 export enum Suit {
   Club = "C",
   Diamond = "D",
@@ -13,7 +17,7 @@ export const SuitDescription = new Map<Suit, string>([
   [Suit.Diamond, "Diamond"],
   [Suit.Heart, "Heart"],
   [Suit.Spade, "Spade"],
-  [Suit.None, "None"], 
+  [Suit.None, "None"],
 ]);
 
 export enum Rank {
