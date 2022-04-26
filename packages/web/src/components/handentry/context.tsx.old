@@ -1,22 +1,22 @@
 import React, { useState, useContext } from "react";
 import { Card, Suit, Rank } from "@poker-checker/common";
 
-export interface CardSlotData {
+export interface ICardSlotData {
   id: number;
   card: Card;
 }
 
-export interface HandData {
+export interface IHandData {
   id: string;
   name: string;
-  slots: Array<CardSlotData>;
+  slots: Array<ICardSlotData>;
 }
 
-export interface HandsData {
-  hands: Array<HandData>;
+export interface IRoundData {
+  hands: Array<IHandData>;
 }
 
-const initialHands: HandsData = {
+const initialRoundData: IRoundData = {
   hands: [
     {
       id: "river",
@@ -48,16 +48,42 @@ const initialHands: HandsData = {
   ],
 };
 
-const AppContext: React.Context<undefined> = React.createContext(undefined);
+export interface ISlotIdentifier {
+  handId: string;
+  slotId: number;
+}
+
+interface IHandEntryContext {
+  // Round state variables
+  roundData: IRoundData;
+  getSlot: (
+    handsData: IRoundData,
+    handId: string,
+    slotId: number
+  ) => ICardSlotData | undefined;
+  setCard: (handId: string, slotId: number, suit: Suit, rank: Rank) => void;
+
+  // Card chooser modal
+  chooserIsOpen: boolean;
+  chooserSlot: { handId: string; slotId: number };
+  closeChooser: () => void;
+  openChooser: (handId: string, slotId: number) => void;
+  setChooserSlot: (slotIndex: ISlotIdentifier) => void;
+}
+
+const handEntryContext = React.createContext<IHandEntryContext>(null);
 
 export interface IProviderProps {
   children?: any;
 }
 
 const AppProvider = (props: IProviderProps) => {
-  const [hands, setHands] = useState(initialHands);
-  const [chooserIsOpen, setChooserIsOpen] = useState(false);
-  const [chooserSlot, setChooserSlot] = useState({
+  const [roundData] = useState<IRoundData>(initialRoundData);
+  const [chooserIsOpen, setChooserIsOpen] = useState<boolean>(false);
+  const [chooserSlot, setChooserSlot] = useState<{
+    handId: string;
+    slotId: number;
+  }>({
     handId: "river",
     slotId: 1,
   });
@@ -72,16 +98,16 @@ const AppProvider = (props: IProviderProps) => {
   };
 
   const getSlot = (
-    handsData: HandsData,
+    handsData: IRoundData,
     handId: string,
     slotId: number
-  ): CardSlotData | undefined => {
-    let slot: CardSlotData | undefined = undefined;
-    let hand: HandData | undefined = undefined;
+  ): ICardSlotData | undefined => {
+    let slot: ICardSlotData | undefined = undefined;
+    let hand: IHandData | undefined = undefined;
 
-    hand = handsData.hands.find((hand: HandData) => hand.id === handId);
+    hand = handsData.hands.find((hand: IHandData) => hand.id === handId);
     if (hand !== undefined) {
-      slot = hand.slots.find((slot: CardSlotData) => slot.id === slotId);
+      slot = hand.slots.find((slot: ICardSlotData) => slot.id === slotId);
     }
 
     return slot;
@@ -93,8 +119,8 @@ const AppProvider = (props: IProviderProps) => {
     suit: Suit,
     rank: Rank
   ): void => {
-    const newHands: HandsData = [...hands];
-    const slot: CardSlotData | undefined = getSlot(newHands, handId, slotId);
+    const newHands: IRoundData = { hands: [...roundData.hands] };
+    const slot: ICardSlotData | undefined = getSlot(newHands, handId, slotId);
     const card: Card = new Card(suit, rank);
 
     if (slot !== undefined) {
@@ -104,25 +130,25 @@ const AppProvider = (props: IProviderProps) => {
 
   return (
     // Provide the various functions and state variables to the global state, using context
-    <AppContext.Provider
+    <handEntryContext.Provider
       value={{
         chooserIsOpen,
         chooserSlot,
         closeChooser,
         getSlot,
-        hands,
+        roundData,
         openChooser,
         setChooserSlot,
         setCard,
       }}
     >
       {props.children}
-    </AppContext.Provider>
+    </handEntryContext.Provider>
   );
 };
 
 export const useHandEntryContext = () => {
-  return useContext(AppContext);
+  return useContext(handEntryContext);
 };
 
-export { AppContext, AppProvider };
+export { handEntryContext as AppContext, AppProvider };

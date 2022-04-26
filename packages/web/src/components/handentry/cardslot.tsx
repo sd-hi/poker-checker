@@ -1,20 +1,47 @@
+import { Rank, Suit } from "@poker-checker/common";
 import React from "react";
 import CardImage from "../shared/cardimage";
-import { useHandEntryContext } from "./context";
+import {
+  ICardSlotData,
+  IHandData,
+  IRoundData,
+  useRoundDataContext,
+} from "./rounddataContext";
 
-const CardSlot = ({ handId: string, slotId: number }) => {
-  const { hands, openChooser }: {hands: HandsData, } = useHandEntryContext();
+type CardSlotProps = {
+  handId: string;
+  slotId: number;
+};
 
-  const hand = hands.find((hands) => hands.id === handId);
-  const slot = hand.slots.find((slot) => slot.id === slotId);
-  const { suit, rank } = slot;
+const CardSlot = ({ handId, slotId }: CardSlotProps) => {
+  const roundDataContext = useRoundDataContext();
+  if (!roundDataContext) {
+    return <></>;
+  }
 
-  if (suit && rank) {
-    return <CardImage onClick={() => openChooser(handId, slotId)} suit={suit} rank={rank} />;
+  const roundData: IRoundData = roundDataContext.roundData;
+  const openChooser = roundDataContext.openChooser;
+
+  const hand = roundData.hands.find((hands: IHandData) => hands.id === handId);
+  if (!hand) {
+    return <></>;
+  }
+
+  const slot = hand.slots.find((slot: ICardSlotData) => slot.id === slotId);
+  if (!slot) {
+    return <></>;
+  }
+
+  if (slot.card.getSuit() !== Suit.None && slot.card.getRank() !== Rank.None) {
+    return (
+      <CardImage onClick={() => openChooser(handId, slotId)} card={slot.card} />
+    );
   } else {
     return (
-      <div className="card-slot" onClick={() => openChooser(handId, slotId)}>
-      </div>
+      <div
+        className="card-slot"
+        onClick={() => openChooser(handId, slotId)}
+      ></div>
     );
   }
 };

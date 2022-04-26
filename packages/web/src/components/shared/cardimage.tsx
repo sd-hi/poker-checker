@@ -14,7 +14,7 @@ const CardImage = ({
   onClick,
 }: {
   card: Card;
-  onClick: React.MouseEventHandler<HTMLImageElement>;
+  onClick: React.MouseEventHandler<HTMLImageElement> | undefined;
 }) => {
   // Get card for this slot
 

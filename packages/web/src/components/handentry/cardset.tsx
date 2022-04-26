@@ -1,13 +1,25 @@
 import React from "react";
 import CardSlot from "./cardslot";
-import { useHandEntryContext } from "./context";
+import { ICardSlotData, IHandData, useHandEntryContext } from "./context";
 
-const CardSet = ({ handId }) => {
-  const { hands } = useHandEntryContext();
+type CardSetProps = {
+  handId: string;
+}
 
-  const hand = hands.find((hand) => hand.id === handId);
+const CardSet = ({ handId }: CardSetProps) => {
+  const handEntryContext = useHandEntryContext();
 
-  const describeHand = (handId) => {
+  if (handEntryContext === null) {
+    return <></>;
+  }
+
+  const hands: Array<IHandData> = handEntryContext.roundData.hands;
+  const hand = hands.find((hand: IHandData) => hand.id === handId);
+  if (!hand) {
+    return <></>;
+  }
+
+  const describeHand = (handId: string) => {
     switch (handId) {
       case "river":
         return "River";
@@ -23,10 +35,10 @@ const CardSet = ({ handId }) => {
   return (
     <div className="card-set-container">
       <div className="card-set-title">
-        <h2>{describeHand(hand.id)}</h2>
+        <h2>{describeHand(hand.name)}</h2>
       </div>
       <div className="card-set-slots">
-        {hand.slots.map((slot) => {
+        {hand.slots.map((slot: ICardSlotData) => {
           return <CardSlot key={slot.id} slotId={slot.id} handId={handId} />;
         })}
       </div>

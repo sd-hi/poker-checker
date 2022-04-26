@@ -1,28 +1,48 @@
 import React, { useEffect, useState } from "react";
 import CardImage from "../shared/cardimage";
 import { Button, Modal } from "react-bootstrap";
-import { useHandEntryContext } from "./context";
+import { ICardSlotData, IHandData, useHandEntryContext } from "./context";
 import {
   BsFillSuitClubFill,
   BsFillSuitDiamondFill,
   BsFillSuitHeartFill,
   BsFillSuitSpadeFill,
 } from "react-icons/bs";
-import { Rank, Suit } from "@poker-checker/common";
+import { Card, Rank, Suit } from "@poker-checker/common";
 
-const CardChooser = () => {
-  const {
-    chooserIsOpen,
-    chooserSlot,
-    closeChooser,
-    getSlot,
-    hands,
-    setCard,
-    setChooserSlot,
-  } = useHandEntryContext();
+interface IProps{
+  chooserSlot: {handId: string, slotId: number}
+  
+}
 
-  const [selectedRank, setSelectedRank] = useState(Rank.None);
-  const [selectedSuit, setSelectedSuit] = useState(Suit.None);
+const CardChooser: React.FC<IProps> = () => {
+  const [selectedSuit, setSelectedSuit] = useState<Suit>(Suit.None);
+  const [selectedRank, setSelectedRank] = useState<Rank>(Rank.None);
+
+  const handEntryContext = useHandEntryContext();
+
+  const chooserSlot = handEntryContext.chooserSlot;
+  const closeChooser = handEntryContext.closeChooser;
+  const setCard = handEntryContext.setCard;
+  const setChooserSlot = handEntryContext.setChooserSlot;
+  const roundData = handEntryContext.roundData;
+
+  useEffect(() => {
+    // Pre-load chooser with card in selected slot
+    const slot: ICardSlotData = getSlot(
+      roundData,
+      chooserSlot.handId,
+      chooserSlot.slotId
+    );
+    setSelectedRank(slot.card.getRank());
+    setSelectedSuit(slot.card.getSuit());
+  }, [chooserSlot, getSlot, roundData]);
+
+
+  if (!handEntryContext) {
+    return <></>;
+  }
+
 
   const handleCardChosen = () => {
     // Confirm single card and close chooser
@@ -35,10 +55,13 @@ const CardChooser = () => {
     setCard(chooserSlot.handId, chooserSlot.slotId, selectedSuit, selectedRank);
 
     let nextSlotId = chooserSlot.slotId + 1;
-    if (
-      nextSlotId <
-      hands.find((hand) => hand.id === chooserSlot.handId).slots.length + 1
-    ) {
+    let hand = roundData.hands.find(
+      (hand: IHandData) => hand.id === chooserSlot.handId
+    );
+    if (!hand) {
+      return;
+    }
+    if (nextSlotId < hand.slots.length + 1) {
       // Next slot is in current hand
       setChooserSlot({ handId: chooserSlot.handId, slotId: nextSlotId });
     } else {
@@ -86,13 +109,6 @@ const CardChooser = () => {
     }
   };
 
-  useEffect(() => {
-    // Pre-load chooser with card in selected slot
-    const slot = getSlot(hands, chooserSlot.handId, chooserSlot.slotId);
-    setSelectedRank(slot.rank);
-    setSelectedSuit(slot.suit);
-  }, [chooserSlot, getSlot, hands]);
-
   return (
     <>
       <Modal show={chooserIsOpen} onHide={closeChooser}>
@@ -105,7 +121,10 @@ const CardChooser = () => {
         <Modal.Body>
           <div className="card-chooser">
             <div className="card-chooser-image-container">
-              <CardImage suit={selectedSuit} rank={selectedRank} />
+              <CardImage
+                card={new Card(selectedSuit, selectedRank)}
+                onClick={undefined}
+              />
             </div>
             <div className="card-choices">
               <div className="card-choices-suits">

@@ -2,11 +2,16 @@ import React from "react";
 import ButtonBar from "../components/handentry/buttonbar";
 import CardChooser from "../components/handentry/cardchooser";
 import CardSet from "../components/handentry/cardset";
-import { useHandEntryContext } from "../components/handentry/context";
+import { IHandData, useHandEntryContext } from "../components/handentry/context";
 import NavigationBar from "../components/shared/navigationbar";
 
 const HandEntry = () => {
-  const { hands } = useHandEntryContext();
+  const handEntryContext = useHandEntryContext();
+
+  if (handEntryContext === null) {
+    return <></>;
+  }
+  const hands: Array<IHandData> | null = handEntryContext.roundData.hands;
 
   return (
     <main>
