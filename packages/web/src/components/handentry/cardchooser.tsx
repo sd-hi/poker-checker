@@ -6,6 +6,7 @@ import {
   ISlotKey,
   roundDataGetCard,
   roundDataSetCard,
+  roundDataGetHandName,
 } from "./rounddata";
 import {
   BsFillSuitClubFill,
@@ -107,7 +108,8 @@ const CardChooser: React.FC<ICardChooserProps> = ({
       <Modal show={isVisible} onHide={handleClose}>
         <Modal.Header>
           <Modal.Title>
-            Choose card ({slotKey.handId} - slot {slotKey.slotId})
+            Choose card ({roundDataGetHandName(roundData, slotKey.handId)} - Card{" "}
+            {slotKey.slotId})
           </Modal.Title>
         </Modal.Header>
 

@@ -1,5 +1,5 @@
 import { Card, Rank, Suit } from "@poker-checker/common";
-import React from "react";
+import React, { useEffect } from "react";
 import CardImage from "../shared/cardimage";
 import { IRoundData, ISlotKey, roundDataGetCard } from "./rounddata";
 
@@ -11,6 +11,10 @@ type CardSlotProps = {
 
 const CardSlot = ({ roundData, slotKey, openChooser }: CardSlotProps) => {
   const card: Card = roundDataGetCard(roundData, slotKey);
+
+  useEffect(() => {
+    // Card slots depend on round data
+  }, [roundData]);
 
   if (card.getSuit() !== Suit.None && card.getRank() !== Rank.None) {
     return (

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import ButtonBar from "../components/handentry/buttonbar";
+import HandEntryButtonBar from "../components/handentry/buttonbar";
 import CardChooser, {
   ICardChooserProps,
 } from "../components/handentry/cardchooser";
@@ -13,7 +13,7 @@ import {
 } from "../components/handentry/rounddata";
 
 const HandEntry = () => {
-  const [roundData] = useState<IRoundData>(initialRoundData);
+  const [roundData, setRoundData] = useState<IRoundData>(initialRoundData);
   const [chooserProps, setChooserProps] = useState<ICardChooserProps>({
     closeChooser: () => {},
     openChooser: () => {},
@@ -54,7 +54,7 @@ const HandEntry = () => {
         openChooser={openChooser}
         closeChooser={closeChooser}
       />
-      <ButtonBar />
+      <HandEntryButtonBar roundData={roundData} setRoundData={setRoundData} />
     </main>
   );
 };

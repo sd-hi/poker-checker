@@ -108,3 +108,63 @@ export const roundDataSetCard = (
     slot.card = card;
   }
 };
+
+const roundDataGetHand = (
+  roundData: IRoundData,
+  handId: string
+): IHandData | undefined => {
+  let hand: IHandData | undefined;
+
+  hand = roundData.hands.find((hand: IHandData) => hand.id === handId);
+
+  return hand;
+};
+
+export const roundDataGetHandName = (
+  roundData: IRoundData,
+  handId: string
+): string => {
+  // Get player name associated with given hand ID
+  let handName: string = "";
+  let hand: IHandData | undefined = roundDataGetHand(roundData, handId);
+
+  if (hand) {
+    if (hand.name !== "") {
+      handName = hand.name;
+    } else {
+      handName = handId;
+    }
+  }
+
+  if (handName === "") {
+    handName = "Unknown";
+  }
+
+  return handName;
+};
+
+const roundDataExecuteForAllCards = (
+  roundData: IRoundData,
+  callbackFn: (card: Card) => Card
+) => {
+  // Execute given callback for every card, returning updated card
+  roundData.hands.forEach((hand: IHandData) => {
+    hand.slots.forEach((slot: ICardSlotData) => {
+      slot.card = callbackFn(slot.card);
+    });
+  });
+};
+
+export const roundDataClearCards = (roundData: IRoundData) => {
+  // Clear cards from every slot
+  roundDataExecuteForAllCards(roundData, (card: Card) => {
+    return new Card(Suit.None, Rank.None);
+  });
+};
+
+export const roundDataRandomizeCards = (roundData: IRoundData) => {
+  roundDataExecuteForAllCards(roundData, (card: Card) => {
+    // TODO - Randomize returned card
+    return card;
+  });
+};
