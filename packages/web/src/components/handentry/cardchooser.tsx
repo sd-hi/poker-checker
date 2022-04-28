@@ -1,7 +1,12 @@
 import React, { useEffect, useState } from "react";
 import CardImage from "../shared/cardimage";
 import { Button, Modal } from "react-bootstrap";
-import { ICardSlotData, IHandData, useHandEntryContext } from "./context";
+import {
+  IHandData,
+  ISlotKey,
+  roundDataGetCard,
+  roundDataSetCard,
+} from "./rounddata";
 import {
   BsFillSuitClubFill,
   BsFillSuitDiamondFill,
@@ -9,79 +14,67 @@ import {
   BsFillSuitSpadeFill,
 } from "react-icons/bs";
 import { Card, Rank, Suit } from "@poker-checker/common";
+import { IRoundData } from "./rounddata";
 
-interface IProps{
-  chooserSlot: {handId: string, slotId: number}
-  
+export interface ICardChooserProps {
+  roundData: IRoundData;
+  isVisible: boolean;
+  slotKey: ISlotKey;
+  closeChooser: () => void;
+  openChooser: (slotKey: ISlotKey) => void;
 }
 
-const CardChooser: React.FC<IProps> = () => {
+const CardChooser: React.FC<ICardChooserProps> = ({
+  roundData,
+  isVisible,
+  slotKey,
+  closeChooser,
+  openChooser,
+}: ICardChooserProps) => {
   const [selectedSuit, setSelectedSuit] = useState<Suit>(Suit.None);
   const [selectedRank, setSelectedRank] = useState<Rank>(Rank.None);
 
-  const handEntryContext = useHandEntryContext();
-
-  const chooserSlot = handEntryContext.chooserSlot;
-  const closeChooser = handEntryContext.closeChooser;
-  const setCard = handEntryContext.setCard;
-  const setChooserSlot = handEntryContext.setChooserSlot;
-  const roundData = handEntryContext.roundData;
-
   useEffect(() => {
     // Pre-load chooser with card in selected slot
-    const slot: ICardSlotData = getSlot(
-      roundData,
-      chooserSlot.handId,
-      chooserSlot.slotId
-    );
-    setSelectedRank(slot.card.getRank());
-    setSelectedSuit(slot.card.getSuit());
-  }, [chooserSlot, getSlot, roundData]);
-
-
-  if (!handEntryContext) {
-    return <></>;
-  }
-
+    setSelectedSuit(roundDataGetCard(roundData, slotKey).getSuit());
+    setSelectedRank(roundDataGetCard(roundData, slotKey).getRank());
+  }, [roundData, slotKey, isVisible]);
 
   const handleCardChosen = () => {
     // Confirm single card and close chooser
-    setCard(chooserSlot.handId, chooserSlot.slotId, selectedSuit, selectedRank);
+    roundDataSetCard(roundData, slotKey, new Card(selectedSuit, selectedRank));
     closeChooser();
   };
 
   const handleCardChosenNext = () => {
     // Confirm card and switch chooser to subsequent slot
-    setCard(chooserSlot.handId, chooserSlot.slotId, selectedSuit, selectedRank);
+    roundDataSetCard(roundData, slotKey, new Card(selectedSuit, selectedRank));
 
-    let nextSlotId = chooserSlot.slotId + 1;
-    let hand = roundData.hands.find(
-      (hand: IHandData) => hand.id === chooserSlot.handId
+    let nextSlotId: number = slotKey.slotId + 1;
+    let hand: IHandData | undefined = roundData.hands.find(
+      (hand: IHandData) => hand.id === slotKey.handId
     );
     if (!hand) {
+      // Failed to find current hand, just close dialog
+      closeChooser();
       return;
     }
+
     if (nextSlotId < hand.slots.length + 1) {
       // Next slot is in current hand
-      setChooserSlot({ handId: chooserSlot.handId, slotId: nextSlotId });
+      openChooser({ handId: hand.id, slotId: nextSlotId });
     } else {
-      //Move to next hand
+      // Move to next hand, open first slot there
       nextSlotId = 1;
-      let nextHandId;
-      switch (chooserSlot.handId) {
-        case "river":
-          nextHandId = "hand1";
-          break;
-        case "hand1":
-          nextHandId = "hand2";
-          break;
-        default:
-          nextHandId = null;
-          break;
-      }
-
-      if (nextHandId) {
-        setChooserSlot({ handId: nextHandId, slotId: nextSlotId });
+      let handNumber: number = roundData.hands.findIndex(
+        (hand: IHandData) => hand.id === slotKey.handId
+      );
+      if (handNumber + 1 < roundData.hands.length) {
+        // There is another valid hand to edit, switch to it
+        openChooser({
+          handId: roundData.hands[handNumber + 1].id,
+          slotId: nextSlotId,
+        });
       } else {
         // No further hands, just close
         closeChooser();
@@ -111,10 +104,10 @@ const CardChooser: React.FC<IProps> = () => {
 
   return (
     <>
-      <Modal show={chooserIsOpen} onHide={closeChooser}>
+      <Modal show={isVisible} onHide={handleClose}>
         <Modal.Header>
           <Modal.Title>
-            Choose card ({chooserSlot.handId} - slot {chooserSlot.slotId})
+            Choose card ({slotKey.handId} - slot {slotKey.slotId})
           </Modal.Title>
         </Modal.Header>
 
@@ -128,43 +121,49 @@ const CardChooser: React.FC<IProps> = () => {
             </div>
             <div className="card-choices">
               <div className="card-choices-suits">
-                {Object.values(Suit).map((suitCode) => {
-                  return (
-                    <div key={suitCode}>
-                      <button
-                        className="btn card-choices-suits-btn"
-                        onClick={() => setSelectedSuit(suitCode)}
-                        style={{
-                          backgroundColor: `${
-                            suitCode === selectedSuit ? "pink" : "lightblue"
-                          }`,
-                        }}
-                      >
-                        {iconForSuit(suitCode)}
-                      </button>
-                    </div>
-                  );
-                })}
+                {Object.values(Suit)
+                  .filter((suit: Suit) => suit !== Suit.None)
+                  .map((suitCode: string) => {
+                    const suit: Suit = suitCode as Suit;
+                    return (
+                      <div key={suitCode}>
+                        <button
+                          className="btn card-choices-suits-btn"
+                          onClick={() => setSelectedSuit(suit)}
+                          style={{
+                            backgroundColor: `${
+                              suit === selectedSuit ? "pink" : "lightblue"
+                            }`,
+                          }}
+                        >
+                          {iconForSuit(suit)}
+                        </button>
+                      </div>
+                    );
+                  })}
               </div>
               <div></div>
               <div className="card-choices-ranks">
-                {carddef.CARD_RANKS.map((rankCode) => {
-                  return (
-                    <div key={rankCode}>
-                      <button
-                        className="btn card-choices-ranks-btn"
-                        onClick={() => setSelectedRank(rankCode)}
-                        style={{
-                          backgroundColor: `${
-                            rankCode === selectedRank ? "pink" : "lightblue"
-                          }`,
-                        }}
-                      >
-                        {rankCode}
-                      </button>
-                    </div>
-                  );
-                })}
+                {Object.values(Rank)
+                  .filter((rank: Rank) => rank !== Rank.None)
+                  .map((rankCode) => {
+                    const rank: Rank = rankCode as Rank;
+                    return (
+                      <div key={rankCode}>
+                        <button
+                          className="btn card-choices-ranks-btn"
+                          onClick={() => setSelectedRank(rank)}
+                          style={{
+                            backgroundColor: `${
+                              rank === selectedRank ? "pink" : "lightblue"
+                            }`,
+                          }}
+                        >
+                          {rankCode}
+                        </button>
+                      </div>
+                    );
+                  })}
               </div>
             </div>
           </div>

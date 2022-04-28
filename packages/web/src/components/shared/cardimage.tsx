@@ -23,15 +23,42 @@ const CardImage = ({
       <img
         className="card-image"
         onClick={onClick}
-        src={`/images/cards/${SuitDescription.get(
-          card.getSuit()
-        )}s_${RankDescription.get(card.getRank())}.svg`}
+        src={cardImageFilePath(card)}
         alt={describeCard(Language.English, card)}
         title={describeCard(Language.English, card)}
       ></img>
     );
   } else {
     return <div></div>;
+  }
+
+  function cardImageFilePath(card: Card): string {
+    // Get path to image for given card
+    let filePath: string = "";
+
+    filePath += `/public/images/cards/`;
+    filePath += SuitDescription.get(card.getSuit());
+    filePath += `s`;
+    filePath += `_`;
+
+    switch (card.getRank()) {
+      case Rank.Ace:
+      case Rank.Jack:
+      case Rank.Queen:
+      case Rank.King:
+        // Use word
+        filePath += RankDescription.get(card.getRank());
+        break;
+      default:
+        // Use number
+        filePath += card.getRank();
+    }
+
+    filePath += `.svg`;
+
+    filePath = filePath.toLowerCase();
+
+    return filePath;
   }
 };
 
