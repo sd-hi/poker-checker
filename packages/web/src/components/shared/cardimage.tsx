@@ -36,7 +36,7 @@ const CardImage = ({
     // Get path to image for given card
     let filePath: string = "";
 
-    filePath += `/public/images/cards/`;
+    filePath += `/images/cards/`;
     filePath += SuitDescription.get(card.getSuit());
     filePath += `s`;
     filePath += `_`;
