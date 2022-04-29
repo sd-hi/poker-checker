@@ -143,6 +143,19 @@ export const roundDataGetHandName = (
   return handName;
 };
 
+export const roundDataSetHandName = (
+  roundData: IRoundData,
+  handId: string,
+  name: string
+): void => {
+  // Set player name associated with given hand ID
+  let hand: IHandData | undefined = roundDataGetHand(roundData, handId);
+
+  if (hand) {
+    hand.name = name;
+  }
+};
+
 const roundDataExecuteForAllCards = (
   roundData: IRoundData,
   callbackFn: (card: Card) => Card

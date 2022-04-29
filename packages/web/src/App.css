@@ -51,6 +51,10 @@
   -webkit-background-clip: text;
 }
 
+.card-set-title:hover {
+  filter: brightness(0.4);
+}
+
 .card-set-slots {
   align-items: center;
   display: grid;
@@ -159,6 +163,8 @@
   text-align: center;
   width: 100%;
 }
+
+/* Button Bar */
 
 .button-bar {
   background-color: #333;

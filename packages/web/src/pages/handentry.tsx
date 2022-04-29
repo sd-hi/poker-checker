@@ -11,6 +11,10 @@ import {
   IRoundData,
   ISlotKey,
 } from "../components/handentry/rounddata";
+import PlayerEditor, {
+  IPlayerEditorProps,
+} from "../components/handentry/playereditor";
+import { isVisible } from "@testing-library/user-event/dist/utils";
 
 const HandEntry = () => {
   const [roundData, setRoundData] = useState<IRoundData>(initialRoundData);
@@ -21,6 +25,13 @@ const HandEntry = () => {
     isVisible: false,
     slotKey: { handId: "dealer", slotId: 1 },
   });
+  const [playerEditorProps, setPlayerEditorProps] =
+    useState<IPlayerEditorProps>({
+      closePlayerEditor: () => {},
+      roundData: roundData,
+      isVisible: false,
+      handId: "dealer",
+    });
 
   const closeChooser = (): void => {
     // Close hand entry card chooser dialog
@@ -32,6 +43,19 @@ const HandEntry = () => {
     setChooserProps({ ...chooserProps, isVisible: true, slotKey: slotKey });
   };
 
+  const closePlayerEditor = (): void => {
+    // Close player editor dialog
+    setPlayerEditorProps({ ...playerEditorProps, isVisible: false });
+  };
+
+  const openPlayerEditor = (handId: string): void => {
+    // Open player editor dialog
+    setPlayerEditorProps({
+      ...playerEditorProps,
+      isVisible: true,
+      handId: handId,
+    });
+  };
   return (
     <main>
       <NavigationBar />
@@ -43,7 +67,9 @@ const HandEntry = () => {
                 key={hand.id}
                 handId={hand.id}
                 roundData={roundData}
+                setRoundData={setRoundData}
                 openChooser={openChooser}
+                openPlayerEditor={openPlayerEditor}
               />
             );
           })}
@@ -53,6 +79,10 @@ const HandEntry = () => {
         {...chooserProps}
         openChooser={openChooser}
         closeChooser={closeChooser}
+      />
+      <PlayerEditor
+        {...playerEditorProps}
+        closePlayerEditor={closePlayerEditor}
       />
       <HandEntryButtonBar roundData={roundData} setRoundData={setRoundData} />
     </main>
