@@ -4,10 +4,19 @@
   "description": "Check results of poker games",
   "main": "index.js",
   "private": true,
+  "scripts": {
+    "build": "cd packages/server && yarn build && cd ../common && yarn build",
+    "server": "cd packages/server && yarn start",
+    "web": "cd packages/web && yarn start",
+    "start": "concurrently \"yarn run server\" \"yarn run web\""
+  },
   "workspaces": [
     "packages/*"
   ],
   "devDependencies": {
     "lerna": "^4.0.0"
+  },
+  "dependencies": {
+    "concurrently": "^7.1.0"
   }
 }

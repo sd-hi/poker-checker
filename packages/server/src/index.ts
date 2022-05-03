@@ -7,6 +7,7 @@ import UserController from './resources/user/user.controller';
 import RoundResultController from './resources/roundresult/roundresult.controller';
 
 export * from './resources/post/post.interface'
+export * from './resources/roundresult/roundresult.interface'
 
 validateEnv();
 

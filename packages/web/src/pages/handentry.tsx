@@ -15,6 +15,7 @@ import PlayerEditor, {
   IPlayerEditorProps,
 } from "../components/handentry/playereditor";
 import { isVisible } from "@testing-library/user-event/dist/utils";
+import { HandId } from "../components/shared/constants";
 
 const HandEntry = () => {
   const [roundData, setRoundData] = useState<IRoundData>(initialRoundData);
@@ -23,14 +24,14 @@ const HandEntry = () => {
     openChooser: () => {},
     roundData: roundData,
     isVisible: false,
-    slotKey: { handId: "dealer", slotId: 1 },
+    slotKey: { handId: HandId.River, slotId: 1 },
   });
   const [playerEditorProps, setPlayerEditorProps] =
     useState<IPlayerEditorProps>({
       closePlayerEditor: () => {},
       roundData: roundData,
       isVisible: false,
-      handId: "dealer",
+      handId: HandId.PlayerA,
     });
 
   const closeChooser = (): void => {

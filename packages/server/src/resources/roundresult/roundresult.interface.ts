@@ -1,5 +1,5 @@
 import { Document } from "mongoose";
-import { Card } from "@poker-checker/common";
+import { Card, PokerRoundState } from "@poker-checker/common";
 
 export interface RoundResultRequestPayload {
   river: {
@@ -15,6 +15,11 @@ export interface RoundResultRequestPayload {
   };
 }
 
-interface RoundResult extends Document, RoundResultRequestPayload {}
+export interface RoundResultResponsePayload {
+  input: RoundResultRequestPayload; // Return the input in the response
+  outcome: PokerRoundState; // Outcome of the poker round submitted
+}
+
+export interface RoundResult extends Document, RoundResultResponsePayload {}
 
 export default RoundResult;

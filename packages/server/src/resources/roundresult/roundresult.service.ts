@@ -7,7 +7,7 @@ class RoundResultService {
     /**
      * Create a new roundresult
      */
-    public async create(requestBody: RoundResultRequestPayload): Promise<RoundResult> {
+    public async create(requestBody: RoundResult): Promise<RoundResult> {
 
         try {
             const roundresult = await this.roundResult.create(requestBody);

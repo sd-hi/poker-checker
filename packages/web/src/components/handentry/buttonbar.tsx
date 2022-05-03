@@ -1,14 +1,23 @@
+import { RequestOptions } from "https";
 import React from "react";
-import { IRoundData, roundDataCopy } from "./rounddata";
-import { roundDataClearCards } from "./rounddata";
+import { submitRoundResult } from "../../api/roundresult";
+import { IRoundData, roundDataClearCards, roundDataCopy } from "./rounddata";
 
 export interface IHandEntryButtonBarProps {
   roundData: IRoundData;
   setRoundData: (roundData: IRoundData) => void;
 }
 
-const HandEntryButtonBar = ({ roundData, setRoundData }: IHandEntryButtonBarProps) => {
+const HandEntryButtonBar = ({
+  roundData,
+  setRoundData,
+}: IHandEntryButtonBarProps) => {
   // Bar with functions
+
+  const handleSubmitRoundResult = (): void => {
+    // Submit round result to API
+    submitRoundResult(roundData);
+  };
 
   const handleButtonClear = () => {
     // Handle user clicking Clear button
@@ -19,7 +28,9 @@ const HandEntryButtonBar = ({ roundData, setRoundData }: IHandEntryButtonBarProp
 
   return (
     <div className="button-bar">
-      <button className="btn btn-primary">Submit</button>
+      <button className="btn btn-primary" onClick={handleSubmitRoundResult}>
+        Submit
+      </button>
       <button className="btn btn-secondary" onClick={handleButtonClear}>
         Clear
       </button>

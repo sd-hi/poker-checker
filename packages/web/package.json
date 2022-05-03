@@ -2,6 +2,7 @@
   "name": "@poker-checker/web",
   "version": "0.1.0",
   "private": true,
+  "proxy": "http://localhost:4000",
   "dependencies": {
     "@poker-checker/common": "1.0.0",
     "@poker-checker/server": "1.0.0",

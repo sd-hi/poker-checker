@@ -1,4 +1,5 @@
 import { Card, Rank, Suit } from "@poker-checker/common";
+import { HandId } from "../shared/constants";
 
 export interface ICardSlotData {
   id: number;
@@ -18,8 +19,8 @@ export interface IRoundData {
 export const initialRoundData: IRoundData = {
   hands: [
     {
-      id: "river",
-      name: "Dealer",
+      id: HandId.River,
+      name: "River",
       slots: [
         { id: 1, card: new Card(Suit.None, Rank.None) },
         { id: 2, card: new Card(Suit.None, Rank.None) },
@@ -29,16 +30,16 @@ export const initialRoundData: IRoundData = {
       ],
     },
     {
-      id: "playerA",
-      name: "Player 1",
+      id: HandId.PlayerA,
+      name: "Player A",
       slots: [
         { id: 1, card: new Card(Suit.None, Rank.None) },
         { id: 2, card: new Card(Suit.None, Rank.None) },
       ],
     },
     {
-      id: "playerB",
-      name: "Player 2",
+      id: HandId.PlayerB,
+      name: "Player B",
       slots: [
         { id: 1, card: new Card(Suit.None, Rank.None) },
         { id: 2, card: new Card(Suit.None, Rank.None) },
@@ -109,7 +110,7 @@ export const roundDataSetCard = (
   }
 };
 
-const roundDataGetHand = (
+export const roundDataGetHand = (
   roundData: IRoundData,
   handId: string
 ): IHandData | undefined => {
