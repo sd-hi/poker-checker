@@ -1,7 +1,7 @@
 import React from "react";
 import CardSlot from "./cardslot";
 import CardSetTitle from "./cardsettitle";
-import { ICardSlotData, IHandData, IRoundData, ISlotKey } from "./rounddata";
+import { ICardSlotData, IHandData, IRoundData, ISlotKey } from "../shared/rounddata";
 
 type ICardSetProps = {
   roundData: IRoundData;

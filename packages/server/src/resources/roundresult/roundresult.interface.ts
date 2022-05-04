@@ -1,17 +1,22 @@
 import { Document } from "mongoose";
-import { Card, PokerRoundState } from "@poker-checker/common";
+import { Card, Rank, Suit, PokerRoundState } from "@poker-checker/common";
+
+interface RoundResultRequestPayloadCard {
+  suit: Suit;
+  rank: Rank;
+}
 
 export interface RoundResultRequestPayload {
   river: {
-    cards: Array<Card>;
+    cards: Array<RoundResultRequestPayloadCard>;
   };
   playerA: {
     name: string;
-    cards: Array<Card>;
+    cards: Array<RoundResultRequestPayloadCard>;
   };
   playerB: {
     name: string;
-    cards: Array<Card>;
+    cards: Array<RoundResultRequestPayloadCard>;
   };
 }
 

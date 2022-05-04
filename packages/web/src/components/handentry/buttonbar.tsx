@@ -1,7 +1,6 @@
-import { RequestOptions } from "https";
 import React from "react";
 import { submitRoundResult } from "../../api/roundresult";
-import { IRoundData, roundDataClearCards, roundDataCopy } from "./rounddata";
+import { IRoundData, roundDataClearCards, roundDataCopy } from "../shared/rounddata";
 
 export interface IHandEntryButtonBarProps {
   roundData: IRoundData;

@@ -7,6 +7,7 @@
   "private": true,
   "scripts": {
     "build": "tsc",
+    "build:watch": "tsc --watch",
     "start": "tsc && node dist/index.js"
   },
   "devDependencies": {

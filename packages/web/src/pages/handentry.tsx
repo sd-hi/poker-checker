@@ -10,11 +10,10 @@ import {
   initialRoundData,
   IRoundData,
   ISlotKey,
-} from "../components/handentry/rounddata";
+} from "../components/shared/rounddata";
 import PlayerEditor, {
   IPlayerEditorProps,
 } from "../components/handentry/playereditor";
-import { isVisible } from "@testing-library/user-event/dist/utils";
 import { HandId } from "../components/shared/constants";
 
 const HandEntry = () => {

@@ -16,5 +16,16 @@ export class Card {
   getSuit(): Suit {
     return this.suit;
   }
+
+  toInterface(): ICard {
+    return {
+      suit: this.suit,
+      rank: this.rank,
+    };
+  }
 }
 
+export interface ICard {
+  suit: Suit;
+  rank: Rank;
+}

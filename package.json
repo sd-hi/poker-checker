@@ -5,7 +5,7 @@
   "main": "index.js",
   "private": true,
   "scripts": {
-    "build": "cd packages/server && yarn build && cd ../common && yarn build",
+    "build": "cd packages/common && yarn build && cd ../server && yarn build",
     "server": "cd packages/server && yarn start",
     "web": "cd packages/web && yarn start",
     "start": "concurrently \"yarn run server\" \"yarn run web\""

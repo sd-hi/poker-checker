@@ -1,5 +1,5 @@
 import React from "react";
-import { IHandData, IRoundData } from "./rounddata";
+import { IHandData, IRoundData } from "../shared/rounddata";
 
 interface ICardSetTitleProps {
   roundData: IRoundData;

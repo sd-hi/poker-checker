@@ -7,7 +7,7 @@ import {
   roundDataGetCard,
   roundDataSetCard,
   roundDataGetHandName,
-} from "./rounddata";
+} from "../shared/rounddata";
 import {
   BsFillSuitClubFill,
   BsFillSuitDiamondFill,
@@ -15,7 +15,7 @@ import {
   BsFillSuitSpadeFill,
 } from "react-icons/bs";
 import { Card, Rank, Suit } from "@poker-checker/common";
-import { IRoundData } from "./rounddata";
+import { IRoundData } from "../shared/rounddata";
 
 export interface ICardChooserProps {
   roundData: IRoundData;

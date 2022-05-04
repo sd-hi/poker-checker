@@ -4,7 +4,7 @@ import {
   IRoundData,
   roundDataGetHandName,
   roundDataSetHandName,
-} from "./rounddata";
+} from "../shared/rounddata";
 
 export interface IPlayerEditorProps {
   roundData: IRoundData;

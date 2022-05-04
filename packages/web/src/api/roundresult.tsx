@@ -1,9 +1,8 @@
 import {
   IHandData,
   IRoundData,
-  roundDataGetCard,
   roundDataGetHand,
-} from "../components/handentry/rounddata";
+} from "../components/shared/rounddata";
 import { HandId } from "../components/shared/constants";
 import { RoundResultRequestPayload } from "@poker-checker/server";
 
@@ -60,14 +59,20 @@ function submitRoundResult_BuildRequestPayLoad(
   }
 
   // Populate river cards
-  requestPayload.river.cards = handRiver.slots.map((slot) => slot.card);
+  requestPayload.river.cards = handRiver.slots.map((slot) => {
+    return { suit: slot.card.getSuit(), rank: slot.card.getRank() };
+  });
 
   // Populate player 1 cards and name
-  requestPayload.playerA.cards = handPlayerA.slots.map((slot) => slot.card);
+  requestPayload.playerA.cards = handPlayerA.slots.map((slot) => {
+    return { suit: slot.card.getSuit(), rank: slot.card.getRank() };
+  });
   requestPayload.playerA.name = handPlayerA.name;
 
   // Populate player 2 cards and name
-  requestPayload.playerB.cards = handPlayerB.slots.map((slot) => slot.card);
+  requestPayload.playerB.cards = handPlayerB.slots.map((slot) => {
+    return { suit: slot.card.getSuit(), rank: slot.card.getRank() };
+  });
   requestPayload.playerB.name = handPlayerB.name;
 
   return requestPayload;

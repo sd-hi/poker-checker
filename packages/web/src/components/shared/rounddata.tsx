@@ -1,5 +1,5 @@
 import { Card, Rank, Suit } from "@poker-checker/common";
-import { HandId } from "../shared/constants";
+import { HandId } from "./constants";
 
 export interface ICardSlotData {
   id: number;
