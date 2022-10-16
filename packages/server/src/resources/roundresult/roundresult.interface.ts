@@ -1,30 +1,36 @@
-import { Document } from "mongoose";
+import { Document, Types } from "mongoose";
 import { Card, Rank, Suit, PokerRoundState } from "@poker-checker/common";
 
-interface RoundResultRequestPayloadCard {
+interface RoundResultPayloadCard {
   suit: Suit;
   rank: Rank;
 }
 
-export interface RoundResultRequestPayload {
+export interface RoundResultPostRequestPayload {
   river: {
-    cards: Array<RoundResultRequestPayloadCard>;
+    cards: Array<RoundResultPayloadCard>;
   };
   playerA: {
     name: string;
-    cards: Array<RoundResultRequestPayloadCard>;
+    cards: Array<RoundResultPayloadCard>;
   };
   playerB: {
     name: string;
-    cards: Array<RoundResultRequestPayloadCard>;
+    cards: Array<RoundResultPayloadCard>;
   };
 }
 
-export interface RoundResultResponsePayload {
-  input: RoundResultRequestPayload; // Return the input in the response
+export interface RoundResultEntry {
+  input: RoundResultPostRequestPayload; // Return the input in the response
   outcome: PokerRoundState; // Outcome of the poker round submitted
 }
 
-export interface RoundResult extends Document, RoundResultResponsePayload {}
+export interface RoundResultPostResponsePayload {
+  id: string; // ID for round result created in database
+}
+
+export interface RoundResultGetResponsePayload extends RoundResultEntry {}
+
+export interface RoundResult extends Document, RoundResultGetResponsePayload {}
 
 export default RoundResult;

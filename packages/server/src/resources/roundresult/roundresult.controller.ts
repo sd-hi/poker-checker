@@ -4,7 +4,7 @@ import HttpException from "../../utils/exceptions/http.exception";
 import validationMiddleware from "../../middleware/validation.middleware";
 import validate from "../../resources/roundresult/roundresult.validation";
 import RoundResultService from "../../resources/roundresult/roundresult.service";
-import RoundResultRequestPayload from "./roundresult.interface";
+import RoundResultPostRequestPayload from "./roundresult.interface";
 import { compile, required } from "joi";
 
 class RoundResultController implements Controller {
@@ -17,6 +17,10 @@ class RoundResultController implements Controller {
   }
 
   private initialiseRoutes(): void {
+    // GET path for reading existing results
+    this.router.get(`${this.path}`, this.read);
+
+    // POST path for creating results
     this.router.post(
       `${this.path}`,
       validationMiddleware(validate.create),
@@ -38,6 +42,25 @@ class RoundResultController implements Controller {
         next(new HttpException(400, e.message));
       } else {
         next(new HttpException(400, "Cannot create roundresult"));
+      }
+    }
+  };
+
+  private read = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<Response | void> => {
+    try {
+      console.log(req.query)
+      const roundResult = await this.RoundResultService.read(req.query.id);
+
+      res.status(200).json({ roundresult: roundResult });
+    } catch (e) {
+      if (e instanceof Error) {
+        next(new HttpException(400, e.message));
+      } else {
+        next(new HttpException(400, "Failed to read roundresult"));
       }
     }
   };

@@ -5,19 +5,19 @@ export enum Language {
 }
 
 export enum Suit {
+  None = "0",
   Club = "C",
   Diamond = "D",
   Heart = "H",
   Spade = "S",
-  None = "0",
 }
 
 export const SuitDescription = new Map<Suit, string>([
+  [Suit.None, "None"],
   [Suit.Club, "Club"],
   [Suit.Diamond, "Diamond"],
   [Suit.Heart, "Heart"],
   [Suit.Spade, "Spade"],
-  [Suit.None, "None"],
 ]);
 
 export enum Rank {

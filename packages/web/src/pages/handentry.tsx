@@ -15,6 +15,9 @@ import PlayerEditor, {
   IPlayerEditorProps,
 } from "../components/handentry/playereditor";
 import { HandId } from "../components/shared/constants";
+import RoundViewer, {
+  IRoundViewerProps,
+} from "../components/shared/roundviewer";
 
 const HandEntry = () => {
   const [roundData, setRoundData] = useState<IRoundData>(initialRoundData);
@@ -32,6 +35,11 @@ const HandEntry = () => {
       isVisible: false,
       handId: HandId.PlayerA,
     });
+  const [roundViewerProps, setRoundViewerProps] = useState<IRoundViewerProps>({
+    closeRoundViewer: () => {},
+    roundResultId: undefined,
+    isVisible: false,
+  });
 
   const closeChooser = (): void => {
     // Close hand entry card chooser dialog
@@ -41,6 +49,18 @@ const HandEntry = () => {
   const openChooser = (slotKey: ISlotKey): void => {
     // Open hand entry card chooser dialog to edit card in given slot
     setChooserProps({ ...chooserProps, isVisible: true, slotKey: slotKey });
+  };
+
+  const closeRoundViewer = (): void => {
+    setRoundViewerProps({ ...roundViewerProps, isVisible: false });
+  };
+
+  const openRoundViewer = (roundResultId: string): void => {
+    setRoundViewerProps({
+      ...roundViewerProps,
+      isVisible: true,
+      roundResultId: roundResultId,
+    });
   };
 
   const closePlayerEditor = (): void => {
@@ -84,7 +104,16 @@ const HandEntry = () => {
         {...playerEditorProps}
         closePlayerEditor={closePlayerEditor}
       />
-      <HandEntryButtonBar roundData={roundData} setRoundData={setRoundData} />
+      <RoundViewer
+        {...roundViewerProps}
+        closeRoundViewer={closeRoundViewer}
+        roundResultId={undefined}
+      />
+      <HandEntryButtonBar
+        roundData={roundData}
+        setRoundData={setRoundData}
+        openRoundViewer={openRoundViewer}
+      />
     </main>
   );
 };

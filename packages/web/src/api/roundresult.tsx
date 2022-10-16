@@ -4,47 +4,43 @@ import {
   roundDataGetHand,
 } from "../components/shared/rounddata";
 import { HandId } from "../components/shared/constants";
-import { RoundResultRequestPayload } from "@poker-checker/server";
+import { RoundResultPostRequestPayload } from "@poker-checker/server";
 
-export function submitRoundResult(roundData: IRoundData) {
-  // Submit round to API's Round Result interface
+export async function submitRoundResult(
+  roundData: IRoundData
+): Promise<string> {
+  // Submit round result to roundresult interface
 
   // Build payload to submit
-  const requestPayload: RoundResultRequestPayload | undefined =
+  const requestPayload: RoundResultPostRequestPayload | undefined =
     submitRoundResult_BuildRequestPayLoad(roundData);
 
-  if (!roundData) {
-    // Failed to build payload
-    return;
-  }
-
-  // TODO REMOVE
-  console.log(requestPayload);
-
   // Submit the payload to API
-  (async () => {
-    const rawResponse = await fetch("/api/roundresult", {
-      method: "POST",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(requestPayload),
-    }).then((data) => {
-      console.log(data.json());
-    });
-  })();
+  const response = await fetch("/api/roundresult", {
+    method: "POST",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(requestPayload),
+  });
+
+  // Get response JSON
+  const responsePayload = await response.json();
+
+  // Return round result ID created
+  return responsePayload.roundresult.id;
 }
 
 function submitRoundResult_BuildRequestPayLoad(
   roundData: IRoundData
-): RoundResultRequestPayload | undefined {
+): RoundResultPostRequestPayload | undefined {
   // Build build a request payload from round data
-  let requestPayload: RoundResultRequestPayload = {
+  let requestPayload: RoundResultPostRequestPayload = {
     river: {},
     playerA: {},
     playerB: {},
-  } as RoundResultRequestPayload;
+  } as RoundResultPostRequestPayload;
   let handRiver: IHandData | undefined;
   let handPlayerA: IHandData | undefined;
   let handPlayerB: IHandData | undefined;

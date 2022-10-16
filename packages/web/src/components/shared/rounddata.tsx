@@ -1,4 +1,10 @@
-import { Card, Rank, Suit } from "@poker-checker/common";
+import {
+  Card,
+  describeCard,
+  Language,
+  Rank,
+  Suit,
+} from "@poker-checker/common";
 import { HandId } from "./constants";
 
 export interface ICardSlotData {
@@ -177,8 +183,15 @@ export const roundDataClearCards = (roundData: IRoundData) => {
 };
 
 export const roundDataRandomizeCards = (roundData: IRoundData) => {
+  // Randomly choose a card for each slot
   roundDataExecuteForAllCards(roundData, (card: Card) => {
-    // TODO - Randomize returned card
-    return card;
+    const suitIndex =
+      Math.floor(Math.random() * (Object.keys(Suit).length - 1)) + 1;
+    const rankIndex =
+      Math.floor(Math.random() * (Object.keys(Rank).length - 1)) + 1;
+    return new Card(
+      Object.values(Suit)[suitIndex],
+      Object.values(Rank)[rankIndex]
+    );
   });
 };
