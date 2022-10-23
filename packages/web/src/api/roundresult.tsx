@@ -5,15 +5,35 @@ import {
 } from "../components/shared/rounddata";
 import { HandId } from "../components/shared/constants";
 import { RoundResultPostRequestPayload } from "@poker-checker/server";
+import { RoundResultGetResponsePayload } from "@poker-checker/server";
 
-export async function submitRoundResult(
-  roundData: IRoundData
-): Promise<string> {
+export async function getRoundResult(
+  roundResultId: string
+): Promise<RoundResultGetResponsePayload | undefined> {
+  // Request API for round result of given ID
+
+  try {
+    const response = await fetch(`/api/roundresult?id=${roundResultId}`, {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    });
+    const responsePayload: RoundResultGetResponsePayload =
+      await response.json();
+    return responsePayload;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+export async function postRoundResult(roundData: IRoundData): Promise<string> {
   // Submit round result to roundresult interface
 
   // Build payload to submit
   const requestPayload: RoundResultPostRequestPayload | undefined =
-    submitRoundResult_BuildRequestPayLoad(roundData);
+    postRoundResult_BuildRequestPayLoad(roundData);
 
   // Submit the payload to API
   const response = await fetch("/api/roundresult", {
@@ -32,7 +52,7 @@ export async function submitRoundResult(
   return responsePayload.roundresult.id;
 }
 
-function submitRoundResult_BuildRequestPayLoad(
+function postRoundResult_BuildRequestPayLoad(
   roundData: IRoundData
 ): RoundResultPostRequestPayload | undefined {
   // Build build a request payload from round data

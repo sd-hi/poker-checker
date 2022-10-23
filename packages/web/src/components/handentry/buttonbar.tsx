@@ -1,5 +1,5 @@
 import React from "react";
-import { submitRoundResult } from "../../api/roundresult";
+import { postRoundResult } from "../../api/roundresult";
 import {
   IRoundData,
   roundDataClearCards,
@@ -22,7 +22,7 @@ const HandEntryButtonBar = ({
 
   const handleSubmitRoundResult = (): void => {
     // Submit round result to API
-    submitRoundResult(roundData)
+    postRoundResult(roundData)
       .then((roundResultId) => {
         // Open round viewer for returned round result ID
         console.log("Opening round viewer with ID " + roundResultId);

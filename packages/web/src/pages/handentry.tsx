@@ -37,8 +37,8 @@ const HandEntry = () => {
     });
   const [roundViewerProps, setRoundViewerProps] = useState<IRoundViewerProps>({
     closeRoundViewer: () => {},
-    roundResultId: undefined,
     isVisible: false,
+    roundResultId: "",
   });
 
   const closeChooser = (): void => {
@@ -52,10 +52,12 @@ const HandEntry = () => {
   };
 
   const closeRoundViewer = (): void => {
+    // Close round viewer dialog
     setRoundViewerProps({ ...roundViewerProps, isVisible: false });
   };
 
   const openRoundViewer = (roundResultId: string): void => {
+    // Open the round result viewing dialog
     setRoundViewerProps({
       ...roundViewerProps,
       isVisible: true,
@@ -104,11 +106,7 @@ const HandEntry = () => {
         {...playerEditorProps}
         closePlayerEditor={closePlayerEditor}
       />
-      <RoundViewer
-        {...roundViewerProps}
-        closeRoundViewer={closeRoundViewer}
-        roundResultId={undefined}
-      />
+      <RoundViewer {...roundViewerProps} closeRoundViewer={closeRoundViewer} />
       <HandEntryButtonBar
         roundData={roundData}
         setRoundData={setRoundData}
