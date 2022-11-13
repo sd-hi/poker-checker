@@ -27,7 +27,7 @@ const RoundResultInputSchema = new Schema({
 
 const RoundResultSchema = new Schema(
   {
-    input: { type: [RoundResultInputSchema] },
+    input: { type: RoundResultInputSchema },
     outcome: { type: Schema.Types.Mixed },
   },
   { timestamps: true }

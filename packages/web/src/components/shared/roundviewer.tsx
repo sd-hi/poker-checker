@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { Button, Modal } from "react-bootstrap";
-import { RoundResultEntry } from "@poker-checker/server";
+import { RoundResult } from "@poker-checker/server";
 import { getRoundResult } from "../../api/roundresult";
+import { Card } from "@poker-checker/common";
+import CardImage from "./cardimage";
 
 export interface IRoundViewerProps {
   isVisible: boolean;
@@ -20,7 +22,7 @@ const RoundViewer: React.FC<IRoundViewerProps> = ({
   roundResultId,
 }: IRoundViewerProps) => {
   const [title, setTitle] = useState<string>("");
-  const [roundResult, setRoundResult] = useState<RoundResultEntry | null>(null);
+  const [roundResult, setRoundResult] = useState<RoundResult | null>(null);
   const [status, setStatus] = useState<RoundViewerStatus>(
     RoundViewerStatus.Loading
   );
@@ -28,13 +30,13 @@ const RoundViewer: React.FC<IRoundViewerProps> = ({
   const handleClose = () => closeRoundViewer();
 
   useEffect(() => {
-    fetchRoundResult();
+    (async () => {
+      await fetchRoundResult();
+    })();
   }, [roundResultId, isVisible]);
 
   const fetchRoundResult = async () => {
     setStatus(RoundViewerStatus.Loading);
-
-    console.log("2 fetch triggered for round ID " + roundResultId);
 
     if (!isVisible) {
       // Round viewer not visible, no point in fetching
@@ -51,13 +53,34 @@ const RoundViewer: React.FC<IRoundViewerProps> = ({
 
     console.log("fetch triggered 2");
 
-    // Get round result from the API
-    getRoundResult(roundResultId)
-      .then((roundResult) => setRoundResult(roundResult))
-      .catch((reason) => console.log(reason));
-
-    console.log(roundResult);
+    try {
+      // Get round result from the API
+      const responsePayload = await getRoundResult(roundResultId);
+      if (responsePayload) {
+        setRoundResult(responsePayload.roundresult);
+      }
+    } catch (err) {
+      console.log(err);
+    }
   };
+
+  let mySet;
+
+  if (roundResult) {
+    console.log("SET POPULATED")
+    console.log(roundResult)
+    console.log(roundResult.input)
+    mySet = (
+      <RoundViewerCardSet
+        cards={roundResult.input.playerA.cards.map((payloadCard) => {
+          return new Card(payloadCard.suit, payloadCard.rank);
+        })}
+        title={roundResult.input.playerA.name}
+      ></RoundViewerCardSet>
+    );
+  } else {
+    mySet = <></>;
+  }
 
   return (
     <>
@@ -66,7 +89,9 @@ const RoundViewer: React.FC<IRoundViewerProps> = ({
           <Modal.Title>{title}</Modal.Title>
         </Modal.Header>
 
-        <Modal.Body>Sample text</Modal.Body>
+        <Modal.Body>
+          <div>{mySet}</div>
+        </Modal.Body>
 
         <Modal.Footer>
           <Button variant="secondary" onClick={handleClose}>
@@ -75,6 +100,28 @@ const RoundViewer: React.FC<IRoundViewerProps> = ({
         </Modal.Footer>
       </Modal>
     </>
+  );
+};
+
+// Round viewer card set is a group of cards to be displayed in the viewer
+interface IRoundViewerCardSetProps {
+  cards: Array<Card>;
+  title: string;
+}
+
+const RoundViewerCardSet = ({ cards, title }: IRoundViewerCardSetProps) => {
+  if (!cards) {
+    return <></>;
+  }
+
+  return (
+    <div className="round-viewer-card-set-container">
+      <div className="round-viewer-card-set-slots">
+        {cards.map((card: Card) => {
+          return <CardImage onClick={() => {}} card={card} />;
+        })}
+      </div>
+    </div>
   );
 };
 

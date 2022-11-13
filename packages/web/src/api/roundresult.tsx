@@ -4,7 +4,7 @@ import {
   roundDataGetHand,
 } from "../components/shared/rounddata";
 import { HandId } from "../components/shared/constants";
-import { RoundResultPostRequestPayload } from "@poker-checker/server";
+import { RoundResultPostRequestPayload, RoundResultPostResponsePayload } from "@poker-checker/server";
 import { RoundResultGetResponsePayload } from "@poker-checker/server";
 
 export async function getRoundResult(
@@ -46,10 +46,10 @@ export async function postRoundResult(roundData: IRoundData): Promise<string> {
   });
 
   // Get response JSON
-  const responsePayload = await response.json();
+  const responsePayload: RoundResultPostResponsePayload = await response.json();
 
   // Return round result ID created
-  return responsePayload.roundresult.id;
+  return responsePayload.id;
 }
 
 function postRoundResult_BuildRequestPayLoad(

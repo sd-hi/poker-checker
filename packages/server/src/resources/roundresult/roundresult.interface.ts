@@ -1,7 +1,7 @@
 import { Document, Types } from "mongoose";
 import { Card, Rank, Suit, PokerRoundState } from "@poker-checker/common";
 
-interface RoundResultPayloadCard {
+export interface RoundResultPayloadCard {
   suit: Suit;
   rank: Rank;
 }
@@ -29,8 +29,10 @@ export interface RoundResultPostResponsePayload {
   id: string; // ID for round result created in database
 }
 
-export interface RoundResultGetResponsePayload extends RoundResultEntry {}
+export interface RoundResultGetResponsePayload {
+  roundresult: RoundResult; // The round result contained in the DB
+}
 
-export interface RoundResult extends Document, RoundResultGetResponsePayload {}
+export interface RoundResult extends Document, RoundResultEntry {}
 
 export default RoundResult;

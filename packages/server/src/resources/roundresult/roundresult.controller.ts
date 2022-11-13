@@ -36,7 +36,7 @@ class RoundResultController implements Controller {
     try {
       const roundResult = await this.RoundResultService.create(req.body);
 
-      res.status(201).json({ roundresult: roundResult });
+      res.status(201).json(roundResult);
     } catch (e) {
       if (e instanceof Error) {
         next(new HttpException(400, e.message));
@@ -52,7 +52,6 @@ class RoundResultController implements Controller {
     next: NextFunction
   ): Promise<Response | void> => {
     try {
-      console.log(req.query)
       const roundResult = await this.RoundResultService.read(req.query.id);
 
       res.status(200).json({ roundresult: roundResult });
