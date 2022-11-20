@@ -76,18 +76,18 @@ function postRoundResult_BuildRequestPayLoad(
 
   // Populate river cards
   requestPayload.river.cards = handRiver.slots.map((slot) => {
-    return { suit: slot.card.getSuit(), rank: slot.card.getRank() };
+    return { suit: slot.card.suit, rank: slot.card.rank };
   });
 
   // Populate player 1 cards and name
   requestPayload.playerA.cards = handPlayerA.slots.map((slot) => {
-    return { suit: slot.card.getSuit(), rank: slot.card.getRank() };
+    return { suit: slot.card.suit, rank: slot.card.rank };
   });
   requestPayload.playerA.name = handPlayerA.name;
 
   // Populate player 2 cards and name
   requestPayload.playerB.cards = handPlayerB.slots.map((slot) => {
-    return { suit: slot.card.getSuit(), rank: slot.card.getRank() };
+    return { suit: slot.card.suit, rank: slot.card.rank };
   });
   requestPayload.playerB.name = handPlayerB.name;
 

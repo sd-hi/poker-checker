@@ -1,8 +1,6 @@
-import { Card } from "./classes";
+import { ICard } from "./classes";
 import { Language, Suit, Rank, PokerHandResult, PokerWinner } from "./const";
 import { describeCard } from "./language";
-
-
 
 describe("describeCard suite", () => {
   testDescribeCard(Suit.Club, Rank.Ace, "Ace of Clubs");
@@ -16,9 +14,9 @@ describe("describeCard suite", () => {
     expectedDescription: string
   ) {
     test(expectedDescription, () => {
-      expect(describeCard(Language.English, new Card(suit, rank))).toEqual(
-        expectedDescription
-      );
+      expect(
+        describeCard(Language.English, { suit: suit, rank: rank })
+      ).toEqual(expectedDescription);
     });
   }
 });

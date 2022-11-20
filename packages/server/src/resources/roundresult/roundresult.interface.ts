@@ -1,5 +1,5 @@
-import { Document, Types } from "mongoose";
-import { Card, Rank, Suit, PokerRoundState } from "@poker-checker/common";
+import { Document } from "mongoose";
+import { Rank, Suit, PokerRoundState } from "@poker-checker/common";
 
 export interface RoundResultPayloadCard {
   suit: Suit;

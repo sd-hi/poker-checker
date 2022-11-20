@@ -1,4 +1,4 @@
-import { Card, PokerWinner } from "@poker-checker/common";
+import { PokerWinner } from "@poker-checker/common";
 import { boolean, string } from "joi";
 import { Schema, model } from "mongoose";
 import RoundResult from "../../resources/roundresult/roundresult.interface";

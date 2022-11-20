@@ -1,5 +1,5 @@
 import { Language, Suit, Rank, PokerHandResult, PokerWinner } from "./const";
-import { Card } from "./classes";
+import { cardObject, ICard } from "./classes";
 import {
   initializePokerHandState,
   initializePokerRoundState,
@@ -64,7 +64,7 @@ describe("rankValue suite", () => {
 });
 
 describe("getHighestRank suite", () => {
-  let cards: Array<Card>;
+  let cards: Array<ICard>;
 
   testGetHighestRank([], Rank.None);
   testGetHighestRank([Rank.Two], Rank.Two);
@@ -89,7 +89,7 @@ describe("getHighestRank suite", () => {
   ) {
     // Function to test input assortment of ranks
     let testDescription: string;
-    let cards: Array<Card>;
+    let cards: Array<ICard>;
 
     if (ranks.length === 0) {
       testDescription = "No cards";
@@ -106,7 +106,9 @@ describe("getHighestRank suite", () => {
     testDescription += " has highest rank of " + expectedRank;
 
     // Make array of cards consistent with provided ranks
-    cards = ranks.map((rank: Rank) => new Card(Suit.Club, rank));
+    cards = ranks.map((rank: Rank) => {
+      return { suit: Suit.Club, rank: rank };
+    });
 
     test(testDescription, () => {
       if (aceHigh !== null) {
@@ -124,19 +126,19 @@ describe("getMostFrequentRank suit", () => {
   });
 
   test("single card", () => {
-    expect(getMostFrequentRank([new Card(Suit.Club, Rank.Ace)])).toBe(Rank.Ace);
+    expect(getMostFrequentRank([cardObject(Suit.Club, Rank.Ace)])).toBe(Rank.Ace);
   });
 
   test("multiple cards", () => {
     expect(
       getMostFrequentRank([
-        new Card(Suit.Diamond, Rank.Ace),
-        new Card(Suit.Club, Rank.Ace),
-        new Card(Suit.Diamond, Rank.Five),
-        new Card(Suit.Heart, Rank.Three),
-        new Card(Suit.Club, Rank.Five),
-        new Card(Suit.Heart, Rank.Five),
-        new Card(Suit.Heart, Rank.Nine),
+        cardObject(Suit.Diamond, Rank.Ace),
+        cardObject(Suit.Club, Rank.Ace),
+        cardObject(Suit.Diamond, Rank.Five),
+        cardObject(Suit.Heart, Rank.Three),
+        cardObject(Suit.Club, Rank.Five),
+        cardObject(Suit.Heart, Rank.Five),
+        cardObject(Suit.Heart, Rank.Nine),
       ])
     ).toBe(Rank.Five);
   });
@@ -145,13 +147,13 @@ describe("getMostFrequentRank suit", () => {
     expect(
       getMostFrequentRank(
         [
-          new Card(Suit.Diamond, Rank.Ace),
-          new Card(Suit.Club, Rank.Ace),
-          new Card(Suit.Diamond, Rank.Five),
-          new Card(Suit.Heart, Rank.Three),
-          new Card(Suit.Club, Rank.Five),
-          new Card(Suit.Heart, Rank.Five),
-          new Card(Suit.Heart, Rank.Nine),
+          cardObject(Suit.Diamond, Rank.Ace),
+          cardObject(Suit.Club, Rank.Ace),
+          cardObject(Suit.Diamond, Rank.Five),
+          cardObject(Suit.Heart, Rank.Three),
+          cardObject(Suit.Club, Rank.Five),
+          cardObject(Suit.Heart, Rank.Five),
+          cardObject(Suit.Heart, Rank.Nine),
         ],
         [Rank.Five]
       )
@@ -164,20 +166,20 @@ describe("getMostFrequentSuit suite", () => {
     expect(getMostFrequentSuit([])).toBe(Suit.None);
   });
   test("single card", () => {
-    expect(getMostFrequentSuit([new Card(Suit.Club, Rank.Ace)])).toBe(
+    expect(getMostFrequentSuit([cardObject(Suit.Club, Rank.Ace)])).toBe(
       Suit.Club
     );
   });
   test("multiple cards", () => {
     expect(
       getMostFrequentSuit([
-        new Card(Suit.Diamond, Rank.Ace),
-        new Card(Suit.Club, Rank.Ace),
-        new Card(Suit.Heart, Rank.Two),
-        new Card(Suit.Heart, Rank.Three),
-        new Card(Suit.Club, Rank.Five),
-        new Card(Suit.Heart, Rank.Seven),
-        new Card(Suit.Heart, Rank.Nine),
+        cardObject(Suit.Diamond, Rank.Ace),
+        cardObject(Suit.Club, Rank.Ace),
+        cardObject(Suit.Heart, Rank.Two),
+        cardObject(Suit.Heart, Rank.Three),
+        cardObject(Suit.Club, Rank.Five),
+        cardObject(Suit.Heart, Rank.Seven),
+        cardObject(Suit.Heart, Rank.Nine),
       ])
     ).toBe(Suit.Heart);
   });
@@ -244,7 +246,7 @@ describe("rankDifference suite", () => {
 });
 
 describe("removeDuplicateRankCards suite", () => {
-  let cards: Array<Card>;
+  let cards: Array<ICard>;
 
   test("empty card set", () => {
     cards = [];
@@ -253,50 +255,50 @@ describe("removeDuplicateRankCards suite", () => {
 
   test("two pairs, no keep rank", () => {
     cards = [
-      new Card(Suit.Club, Rank.Four),
-      new Card(Suit.Diamond, Rank.Two),
-      new Card(Suit.Heart, Rank.Three),
-      new Card(Suit.Spade, Rank.Two),
-      new Card(Suit.Diamond, Rank.Four),
-      new Card(Suit.Heart, Rank.Six),
-      new Card(Suit.Heart, Rank.Eight),
+      cardObject(Suit.Club, Rank.Four),
+      cardObject(Suit.Diamond, Rank.Two),
+      cardObject(Suit.Heart, Rank.Three),
+      cardObject(Suit.Spade, Rank.Two),
+      cardObject(Suit.Diamond, Rank.Four),
+      cardObject(Suit.Heart, Rank.Six),
+      cardObject(Suit.Heart, Rank.Eight),
     ];
     // Should only keep one of each, does not matter which suit
     cards = removeDuplicateRankCards(cards);
     expect(cards.length).toEqual(5);
-    expect(cards[0].getRank()).toEqual(Rank.Eight);
-    expect(cards[1].getRank()).toEqual(Rank.Six);
-    expect(cards[2].getRank()).toEqual(Rank.Four);
-    expect(cards[3].getRank()).toEqual(Rank.Three);
-    expect(cards[4].getRank()).toEqual(Rank.Two);
+    expect(cards[0].rank).toEqual(Rank.Eight);
+    expect(cards[1].rank).toEqual(Rank.Six);
+    expect(cards[2].rank).toEqual(Rank.Four);
+    expect(cards[3].rank).toEqual(Rank.Three);
+    expect(cards[4].rank).toEqual(Rank.Two);
   });
 
   test("two pairs, keep rank specified", () => {
     cards = [
-      new Card(Suit.Club, Rank.Four),
-      new Card(Suit.Diamond, Rank.Two),
-      new Card(Suit.Heart, Rank.Three),
-      new Card(Suit.Spade, Rank.Two),
-      new Card(Suit.Diamond, Rank.Four),
-      new Card(Suit.Heart, Rank.Six),
-      new Card(Suit.Heart, Rank.Eight),
+      cardObject(Suit.Club, Rank.Four),
+      cardObject(Suit.Diamond, Rank.Two),
+      cardObject(Suit.Heart, Rank.Three),
+      cardObject(Suit.Spade, Rank.Two),
+      cardObject(Suit.Diamond, Rank.Four),
+      cardObject(Suit.Heart, Rank.Six),
+      cardObject(Suit.Heart, Rank.Eight),
     ];
     // Should only keep one of each, keeping diamonds if possible
     cards = removeDuplicateRankCards(cards, Suit.Diamond);
     expect(cards.length).toEqual(5);
-    expect(cards[0].getRank()).toEqual(Rank.Eight);
-    expect(cards[1].getRank()).toEqual(Rank.Six);
-    expect(cards[2].getRank()).toEqual(Rank.Four);
-    expect(cards[2].getSuit()).toEqual(Suit.Diamond);
-    expect(cards[3].getRank()).toEqual(Rank.Three);
-    expect(cards[4].getRank()).toEqual(Rank.Two);
-    expect(cards[4].getSuit()).toEqual(Suit.Diamond);
+    expect(cards[0].rank).toEqual(Rank.Eight);
+    expect(cards[1].rank).toEqual(Rank.Six);
+    expect(cards[2].rank).toEqual(Rank.Four);
+    expect(cards[2].suit).toEqual(Suit.Diamond);
+    expect(cards[3].rank).toEqual(Rank.Three);
+    expect(cards[4].rank).toEqual(Rank.Two);
+    expect(cards[4].suit).toEqual(Suit.Diamond);
   });
 });
 
 describe("detectPokerHandResult suite", () => {
   let state: PokerHandState;
-  let cards: Array<Card>;
+  let cards: Array<ICard>;
 
   test("empty card set", () => {
     cards = [];
@@ -313,24 +315,24 @@ describe("detectPokerHandResult suite", () => {
 
   test("royal flush, with two pairs", () => {
     cards = [
-      new Card(Suit.Spade, Rank.Ace),
-      new Card(Suit.Spade, Rank.King),
-      new Card(Suit.Spade, Rank.Queen),
-      new Card(Suit.Spade, Rank.Jack),
-      new Card(Suit.Spade, Rank.Ten),
-      new Card(Suit.Heart, Rank.Ace),
-      new Card(Suit.Heart, Rank.King),
+      cardObject(Suit.Spade, Rank.Ace),
+      cardObject(Suit.Spade, Rank.King),
+      cardObject(Suit.Spade, Rank.Queen),
+      cardObject(Suit.Spade, Rank.Jack),
+      cardObject(Suit.Spade, Rank.Ten),
+      cardObject(Suit.Heart, Rank.Ace),
+      cardObject(Suit.Heart, Rank.King),
     ];
     state = initializePokerHandState();
     detectPokerHandResult(state, cards);
     expect(state.finalResult).toEqual(PokerHandResult.RoyalFlush);
-    expect(state.finalResultCards[0].getRank()).toEqual(Rank.Ten);
-    expect(state.finalResultCards[1].getRank()).toEqual(Rank.Jack);
-    expect(state.finalResultCards[2].getRank()).toEqual(Rank.Queen);
-    expect(state.finalResultCards[3].getRank()).toEqual(Rank.King);
-    expect(state.finalResultCards[4].getRank()).toEqual(Rank.Ace);
-    state.flushResultCards.forEach((card: Card) => {
-      expect(card.getSuit() === Suit.Spade);
+    expect(state.finalResultCards[0].rank).toEqual(Rank.Ten);
+    expect(state.finalResultCards[1].rank).toEqual(Rank.Jack);
+    expect(state.finalResultCards[2].rank).toEqual(Rank.Queen);
+    expect(state.finalResultCards[3].rank).toEqual(Rank.King);
+    expect(state.finalResultCards[4].rank).toEqual(Rank.Ace);
+    state.flushResultCards.forEach((card: ICard) => {
+      expect(card.suit === Suit.Spade);
     });
     expect(state.finalResultRanks.length).toEqual(1);
     expect(state.finalResultRanks[0]).toEqual(Rank.Ace);
@@ -343,24 +345,24 @@ describe("detectPokerHandResult suite", () => {
 
   test("straight flush, with two pairs", () => {
     cards = [
-      new Card(Suit.Spade, Rank.Ace),
-      new Card(Suit.Spade, Rank.Two),
-      new Card(Suit.Spade, Rank.Three),
-      new Card(Suit.Spade, Rank.Four),
-      new Card(Suit.Spade, Rank.Five),
-      new Card(Suit.Heart, Rank.Four),
-      new Card(Suit.Heart, Rank.Five),
+      cardObject(Suit.Spade, Rank.Ace),
+      cardObject(Suit.Spade, Rank.Two),
+      cardObject(Suit.Spade, Rank.Three),
+      cardObject(Suit.Spade, Rank.Four),
+      cardObject(Suit.Spade, Rank.Five),
+      cardObject(Suit.Heart, Rank.Four),
+      cardObject(Suit.Heart, Rank.Five),
     ];
     state = initializePokerHandState();
     detectPokerHandResult(state, cards);
     expect(state.finalResult).toEqual(PokerHandResult.StraightFlush);
-    expect(state.finalResultCards[0].getRank()).toEqual(Rank.Ace);
-    expect(state.finalResultCards[1].getRank()).toEqual(Rank.Two);
-    expect(state.finalResultCards[2].getRank()).toEqual(Rank.Three);
-    expect(state.finalResultCards[3].getRank()).toEqual(Rank.Four);
-    expect(state.finalResultCards[4].getRank()).toEqual(Rank.Five);
-    state.flushResultCards.forEach((card: Card) => {
-      expect(card.getSuit() === Suit.Spade);
+    expect(state.finalResultCards[0].rank).toEqual(Rank.Ace);
+    expect(state.finalResultCards[1].rank).toEqual(Rank.Two);
+    expect(state.finalResultCards[2].rank).toEqual(Rank.Three);
+    expect(state.finalResultCards[3].rank).toEqual(Rank.Four);
+    expect(state.finalResultCards[4].rank).toEqual(Rank.Five);
+    state.flushResultCards.forEach((card: ICard) => {
+      expect(card.suit === Suit.Spade);
     });
     expect(state.finalResultRanks.length).toEqual(1);
     expect(state.finalResultRanks[0]).toEqual(Rank.Five);
@@ -372,21 +374,21 @@ describe("detectPokerHandResult suite", () => {
 
   test("four of a kind, with extra triple", () => {
     cards = [
-      new Card(Suit.Club, Rank.Two),
-      new Card(Suit.Diamond, Rank.Two),
-      new Card(Suit.Heart, Rank.Two),
-      new Card(Suit.Spade, Rank.Two),
-      new Card(Suit.Club, Rank.King),
-      new Card(Suit.Diamond, Rank.King),
-      new Card(Suit.Heart, Rank.King),
+      cardObject(Suit.Club, Rank.Two),
+      cardObject(Suit.Diamond, Rank.Two),
+      cardObject(Suit.Heart, Rank.Two),
+      cardObject(Suit.Spade, Rank.Two),
+      cardObject(Suit.Club, Rank.King),
+      cardObject(Suit.Diamond, Rank.King),
+      cardObject(Suit.Heart, Rank.King),
     ];
     state = initializePokerHandState();
     detectPokerHandResult(state, cards);
     expect(state.finalResult).toEqual(PokerHandResult.FourOfAKind);
-    expect(state.finalResultCards[0].getRank()).toEqual(Rank.Two);
-    expect(state.finalResultCards[1].getRank()).toEqual(Rank.Two);
-    expect(state.finalResultCards[2].getRank()).toEqual(Rank.Two);
-    expect(state.finalResultCards[3].getRank()).toEqual(Rank.Two);
+    expect(state.finalResultCards[0].rank).toEqual(Rank.Two);
+    expect(state.finalResultCards[1].rank).toEqual(Rank.Two);
+    expect(state.finalResultCards[2].rank).toEqual(Rank.Two);
+    expect(state.finalResultCards[3].rank).toEqual(Rank.Two);
     expect(state.finalResultRanks.length).toEqual(1);
     expect(state.finalResultRanks[0]).toEqual(Rank.Two);
 
@@ -397,22 +399,22 @@ describe("detectPokerHandResult suite", () => {
 
   test("full house, with two pairs", () => {
     cards = [
-      new Card(Suit.Club, Rank.Two),
-      new Card(Suit.Diamond, Rank.Two),
-      new Card(Suit.Heart, Rank.Two),
-      new Card(Suit.Spade, Rank.Three),
-      new Card(Suit.Club, Rank.Three),
-      new Card(Suit.Diamond, Rank.King),
-      new Card(Suit.Heart, Rank.King),
+      cardObject(Suit.Club, Rank.Two),
+      cardObject(Suit.Diamond, Rank.Two),
+      cardObject(Suit.Heart, Rank.Two),
+      cardObject(Suit.Spade, Rank.Three),
+      cardObject(Suit.Club, Rank.Three),
+      cardObject(Suit.Diamond, Rank.King),
+      cardObject(Suit.Heart, Rank.King),
     ];
     state = initializePokerHandState();
     detectPokerHandResult(state, cards);
     expect(state.finalResult).toEqual(PokerHandResult.FullHouse);
-    expect(state.finalResultCards[0].getRank()).toEqual(Rank.Two);
-    expect(state.finalResultCards[1].getRank()).toEqual(Rank.Two);
-    expect(state.finalResultCards[2].getRank()).toEqual(Rank.Two);
-    expect(state.finalResultCards[3].getRank()).toEqual(Rank.King);
-    expect(state.finalResultCards[4].getRank()).toEqual(Rank.King);
+    expect(state.finalResultCards[0].rank).toEqual(Rank.Two);
+    expect(state.finalResultCards[1].rank).toEqual(Rank.Two);
+    expect(state.finalResultCards[2].rank).toEqual(Rank.Two);
+    expect(state.finalResultCards[3].rank).toEqual(Rank.King);
+    expect(state.finalResultCards[4].rank).toEqual(Rank.King);
     expect(state.finalResultRanks.length).toEqual(2);
     expect(state.finalResultRanks[0]).toEqual(Rank.Two);
     expect(state.finalResultRanks[1]).toEqual(Rank.King);
@@ -424,24 +426,24 @@ describe("detectPokerHandResult suite", () => {
 
   test("flush, with non-suited straight", () => {
     cards = [
-      new Card(Suit.Spade, Rank.Ace),
-      new Card(Suit.Spade, Rank.Three),
-      new Card(Suit.Spade, Rank.Five),
-      new Card(Suit.Spade, Rank.Seven),
-      new Card(Suit.Spade, Rank.Nine),
-      new Card(Suit.Heart, Rank.Two),
-      new Card(Suit.Heart, Rank.Four),
+      cardObject(Suit.Spade, Rank.Ace),
+      cardObject(Suit.Spade, Rank.Three),
+      cardObject(Suit.Spade, Rank.Five),
+      cardObject(Suit.Spade, Rank.Seven),
+      cardObject(Suit.Spade, Rank.Nine),
+      cardObject(Suit.Heart, Rank.Two),
+      cardObject(Suit.Heart, Rank.Four),
     ];
     state = initializePokerHandState();
     detectPokerHandResult(state, cards);
     expect(state.finalResult).toEqual(PokerHandResult.Flush);
-    expect(state.finalResultCards[0].getRank()).toEqual(Rank.Ace);
-    expect(state.finalResultCards[1].getRank()).toEqual(Rank.Nine);
-    expect(state.finalResultCards[2].getRank()).toEqual(Rank.Seven);
-    expect(state.finalResultCards[3].getRank()).toEqual(Rank.Five);
-    expect(state.finalResultCards[4].getRank()).toEqual(Rank.Three);
-    state.flushResultCards.forEach((card: Card) => {
-      expect(card.getSuit() === Suit.Spade);
+    expect(state.finalResultCards[0].rank).toEqual(Rank.Ace);
+    expect(state.finalResultCards[1].rank).toEqual(Rank.Nine);
+    expect(state.finalResultCards[2].rank).toEqual(Rank.Seven);
+    expect(state.finalResultCards[3].rank).toEqual(Rank.Five);
+    expect(state.finalResultCards[4].rank).toEqual(Rank.Three);
+    state.flushResultCards.forEach((card: ICard) => {
+      expect(card.suit === Suit.Spade);
     });
     expect(state.finalResultRanks.length).toEqual(5);
     expect(state.finalResultRanks[0]).toEqual(Rank.Ace);
@@ -457,22 +459,22 @@ describe("detectPokerHandResult suite", () => {
 
   test("straight, with two pairs", () => {
     cards = [
-      new Card(Suit.Club, Rank.Ace),
-      new Card(Suit.Diamond, Rank.Two),
-      new Card(Suit.Heart, Rank.Three),
-      new Card(Suit.Spade, Rank.Four),
-      new Card(Suit.Club, Rank.Five),
-      new Card(Suit.Diamond, Rank.Four),
-      new Card(Suit.Heart, Rank.Five),
+      cardObject(Suit.Club, Rank.Ace),
+      cardObject(Suit.Diamond, Rank.Two),
+      cardObject(Suit.Heart, Rank.Three),
+      cardObject(Suit.Spade, Rank.Four),
+      cardObject(Suit.Club, Rank.Five),
+      cardObject(Suit.Diamond, Rank.Four),
+      cardObject(Suit.Heart, Rank.Five),
     ];
     state = initializePokerHandState();
     detectPokerHandResult(state, cards);
     expect(state.finalResult).toEqual(PokerHandResult.Straight);
-    expect(state.finalResultCards[0].getRank()).toEqual(Rank.Ace);
-    expect(state.finalResultCards[1].getRank()).toEqual(Rank.Two);
-    expect(state.finalResultCards[2].getRank()).toEqual(Rank.Three);
-    expect(state.finalResultCards[3].getRank()).toEqual(Rank.Four);
-    expect(state.finalResultCards[4].getRank()).toEqual(Rank.Five);
+    expect(state.finalResultCards[0].rank).toEqual(Rank.Ace);
+    expect(state.finalResultCards[1].rank).toEqual(Rank.Two);
+    expect(state.finalResultCards[2].rank).toEqual(Rank.Three);
+    expect(state.finalResultCards[3].rank).toEqual(Rank.Four);
+    expect(state.finalResultCards[4].rank).toEqual(Rank.Five);
     expect(state.finalResultRanks.length).toEqual(1);
     expect(state.finalResultRanks[0]).toEqual(Rank.Five);
 
@@ -483,20 +485,20 @@ describe("detectPokerHandResult suite", () => {
 
   test("three of a kind", () => {
     cards = [
-      new Card(Suit.Club, Rank.Queen),
-      new Card(Suit.Diamond, Rank.King),
-      new Card(Suit.Heart, Rank.Queen),
-      new Card(Suit.Spade, Rank.Ace),
-      new Card(Suit.Club, Rank.Ten),
-      new Card(Suit.Diamond, Rank.Queen),
-      new Card(Suit.Heart, Rank.Nine),
+      cardObject(Suit.Club, Rank.Queen),
+      cardObject(Suit.Diamond, Rank.King),
+      cardObject(Suit.Heart, Rank.Queen),
+      cardObject(Suit.Spade, Rank.Ace),
+      cardObject(Suit.Club, Rank.Ten),
+      cardObject(Suit.Diamond, Rank.Queen),
+      cardObject(Suit.Heart, Rank.Nine),
     ];
     state = initializePokerHandState();
     detectPokerHandResult(state, cards);
     expect(state.finalResult).toEqual(PokerHandResult.ThreeOfAKind);
-    expect(state.finalResultCards[0].getRank()).toEqual(Rank.Queen);
-    expect(state.finalResultCards[1].getRank()).toEqual(Rank.Queen);
-    expect(state.finalResultCards[2].getRank()).toEqual(Rank.Queen);
+    expect(state.finalResultCards[0].rank).toEqual(Rank.Queen);
+    expect(state.finalResultCards[1].rank).toEqual(Rank.Queen);
+    expect(state.finalResultCards[2].rank).toEqual(Rank.Queen);
     expect(state.finalResultRanks.length).toEqual(1);
     expect(state.finalResultRanks[0]).toEqual(Rank.Queen);
 
@@ -507,21 +509,21 @@ describe("detectPokerHandResult suite", () => {
 
   test("two pair, with extra pair", () => {
     cards = [
-      new Card(Suit.Club, Rank.Queen),
-      new Card(Suit.Diamond, Rank.Queen),
-      new Card(Suit.Heart, Rank.King),
-      new Card(Suit.Spade, Rank.King),
-      new Card(Suit.Club, Rank.Ace),
-      new Card(Suit.Diamond, Rank.Ace),
-      new Card(Suit.Heart, Rank.Jack),
+      cardObject(Suit.Club, Rank.Queen),
+      cardObject(Suit.Diamond, Rank.Queen),
+      cardObject(Suit.Heart, Rank.King),
+      cardObject(Suit.Spade, Rank.King),
+      cardObject(Suit.Club, Rank.Ace),
+      cardObject(Suit.Diamond, Rank.Ace),
+      cardObject(Suit.Heart, Rank.Jack),
     ];
     state = initializePokerHandState();
     detectPokerHandResult(state, cards);
     expect(state.finalResult).toEqual(PokerHandResult.TwoPair);
-    expect(state.finalResultCards[0].getRank()).toEqual(Rank.Ace);
-    expect(state.finalResultCards[1].getRank()).toEqual(Rank.Ace);
-    expect(state.finalResultCards[2].getRank()).toEqual(Rank.King);
-    expect(state.finalResultCards[3].getRank()).toEqual(Rank.King);
+    expect(state.finalResultCards[0].rank).toEqual(Rank.Ace);
+    expect(state.finalResultCards[1].rank).toEqual(Rank.Ace);
+    expect(state.finalResultCards[2].rank).toEqual(Rank.King);
+    expect(state.finalResultCards[3].rank).toEqual(Rank.King);
     expect(state.finalResultRanks.length).toEqual(2);
     expect(state.finalResultRanks[0]).toEqual(Rank.Ace);
     expect(state.finalResultRanks[1]).toEqual(Rank.King);
@@ -533,19 +535,19 @@ describe("detectPokerHandResult suite", () => {
 
   test("single pair", () => {
     cards = [
-      new Card(Suit.Club, Rank.Ace),
-      new Card(Suit.Diamond, Rank.Two),
-      new Card(Suit.Heart, Rank.Two),
-      new Card(Suit.Spade, Rank.King),
-      new Card(Suit.Club, Rank.Queen),
-      new Card(Suit.Diamond, Rank.Jack),
-      new Card(Suit.Heart, Rank.Five),
+      cardObject(Suit.Club, Rank.Ace),
+      cardObject(Suit.Diamond, Rank.Two),
+      cardObject(Suit.Heart, Rank.Two),
+      cardObject(Suit.Spade, Rank.King),
+      cardObject(Suit.Club, Rank.Queen),
+      cardObject(Suit.Diamond, Rank.Jack),
+      cardObject(Suit.Heart, Rank.Five),
     ];
     state = initializePokerHandState();
     detectPokerHandResult(state, cards);
     expect(state.finalResult).toEqual(PokerHandResult.Pair);
-    expect(state.finalResultCards[0].getRank()).toEqual(Rank.Two);
-    expect(state.finalResultCards[1].getRank()).toEqual(Rank.Two);
+    expect(state.finalResultCards[0].rank).toEqual(Rank.Two);
+    expect(state.finalResultCards[1].rank).toEqual(Rank.Two);
     expect(state.finalResultRanks.length).toEqual(1);
     expect(state.finalResultRanks[0]).toEqual(Rank.Two);
 
@@ -556,22 +558,22 @@ describe("detectPokerHandResult suite", () => {
 
   test("high card", () => {
     cards = [
-      new Card(Suit.Club, Rank.Ace),
-      new Card(Suit.Diamond, Rank.Six),
-      new Card(Suit.Heart, Rank.Two),
-      new Card(Suit.Spade, Rank.King),
-      new Card(Suit.Club, Rank.Queen),
-      new Card(Suit.Diamond, Rank.Jack),
-      new Card(Suit.Heart, Rank.Five),
+      cardObject(Suit.Club, Rank.Ace),
+      cardObject(Suit.Diamond, Rank.Six),
+      cardObject(Suit.Heart, Rank.Two),
+      cardObject(Suit.Spade, Rank.King),
+      cardObject(Suit.Club, Rank.Queen),
+      cardObject(Suit.Diamond, Rank.Jack),
+      cardObject(Suit.Heart, Rank.Five),
     ];
     state = initializePokerHandState();
     detectPokerHandResult(state, cards);
     expect(state.finalResult).toEqual(PokerHandResult.HighCard);
-    expect(state.finalResultCards[0].getRank()).toEqual(Rank.Ace);
-    expect(state.finalResultCards[1].getRank()).toEqual(Rank.King);
-    expect(state.finalResultCards[2].getRank()).toEqual(Rank.Queen);
-    expect(state.finalResultCards[3].getRank()).toEqual(Rank.Jack);
-    expect(state.finalResultCards[4].getRank()).toEqual(Rank.Six);
+    expect(state.finalResultCards[0].rank).toEqual(Rank.Ace);
+    expect(state.finalResultCards[1].rank).toEqual(Rank.King);
+    expect(state.finalResultCards[2].rank).toEqual(Rank.Queen);
+    expect(state.finalResultCards[3].rank).toEqual(Rank.Jack);
+    expect(state.finalResultCards[4].rank).toEqual(Rank.Six);
     expect(state.finalResultRanks.length).toEqual(5);
     expect(state.finalResultRanks[0]).toEqual(Rank.Ace);
     expect(state.finalResultRanks[1]).toEqual(Rank.King);
@@ -587,7 +589,7 @@ describe("detectPokerHandResult suite", () => {
 
 describe("detectPokerHandResult_Detect_Duplicates suite", () => {
   let state: PokerHandState;
-  let cards: Array<Card>;
+  let cards: Array<ICard>;
 
   test("empty card set", () => {
     cards = [];
@@ -601,13 +603,13 @@ describe("detectPokerHandResult_Detect_Duplicates suite", () => {
 
   test("no duplicates present", () => {
     cards = [
-      new Card(Suit.Club, Rank.Ace),
-      new Card(Suit.Club, Rank.Three),
-      new Card(Suit.Club, Rank.Five),
-      new Card(Suit.Diamond, Rank.Seven),
-      new Card(Suit.Heart, Rank.Nine),
-      new Card(Suit.Heart, Rank.Jack),
-      new Card(Suit.Heart, Rank.King),
+      cardObject(Suit.Club, Rank.Ace),
+      cardObject(Suit.Club, Rank.Three),
+      cardObject(Suit.Club, Rank.Five),
+      cardObject(Suit.Diamond, Rank.Seven),
+      cardObject(Suit.Heart, Rank.Nine),
+      cardObject(Suit.Heart, Rank.Jack),
+      cardObject(Suit.Heart, Rank.King),
     ];
     state = initializePokerHandState();
     detectPokerHandResult_Detect_Duplicates(state, cards);
@@ -618,23 +620,23 @@ describe("detectPokerHandResult_Detect_Duplicates suite", () => {
   test("single pair", () => {
     state = initializePokerHandState();
     cards = [
-      new Card(Suit.Club, Rank.Ace),
-      new Card(Suit.Diamond, Rank.Ace),
-      new Card(Suit.Club, Rank.Five),
-      new Card(Suit.Diamond, Rank.Seven),
-      new Card(Suit.Heart, Rank.Nine),
-      new Card(Suit.Heart, Rank.Jack),
-      new Card(Suit.Heart, Rank.King),
+      cardObject(Suit.Club, Rank.Ace),
+      cardObject(Suit.Diamond, Rank.Ace),
+      cardObject(Suit.Club, Rank.Five),
+      cardObject(Suit.Diamond, Rank.Seven),
+      cardObject(Suit.Heart, Rank.Nine),
+      cardObject(Suit.Heart, Rank.Jack),
+      cardObject(Suit.Heart, Rank.King),
     ];
     detectPokerHandResult_Detect_Duplicates(state, cards);
     expect(state.duplicateResult).toEqual(PokerHandResult.Pair);
     expect(state.duplicateResultCards.length).toEqual(2);
-    expect(state.duplicateResultCards[0].getRank()).toEqual(Rank.Ace);
-    expect(state.duplicateResultCards[1].getRank()).toEqual(Rank.Ace);
+    expect(state.duplicateResultCards[0].rank).toEqual(Rank.Ace);
+    expect(state.duplicateResultCards[1].rank).toEqual(Rank.Ace);
     expect(state.duplicateKickerCards).toEqual([
-      new Card(Suit.Heart, Rank.King),
-      new Card(Suit.Heart, Rank.Jack),
-      new Card(Suit.Heart, Rank.Nine),
+      cardObject(Suit.Heart, Rank.King),
+      cardObject(Suit.Heart, Rank.Jack),
+      cardObject(Suit.Heart, Rank.Nine),
     ]);
   });
 
@@ -642,23 +644,23 @@ describe("detectPokerHandResult_Detect_Duplicates suite", () => {
     // Test two pair
     state = initializePokerHandState();
     cards = [
-      new Card(Suit.Club, Rank.Ace),
-      new Card(Suit.Club, Rank.Ace),
-      new Card(Suit.Club, Rank.Five),
-      new Card(Suit.Diamond, Rank.Five),
-      new Card(Suit.Heart, Rank.Nine),
-      new Card(Suit.Heart, Rank.Jack),
-      new Card(Suit.Heart, Rank.King),
+      cardObject(Suit.Club, Rank.Ace),
+      cardObject(Suit.Club, Rank.Ace),
+      cardObject(Suit.Club, Rank.Five),
+      cardObject(Suit.Diamond, Rank.Five),
+      cardObject(Suit.Heart, Rank.Nine),
+      cardObject(Suit.Heart, Rank.Jack),
+      cardObject(Suit.Heart, Rank.King),
     ];
     detectPokerHandResult_Detect_Duplicates(state, cards);
     expect(state.duplicateResult).toEqual(PokerHandResult.TwoPair);
     expect(state.duplicateResultCards.length).toEqual(4);
-    expect(state.duplicateResultCards[0].getRank()).toEqual(Rank.Ace);
-    expect(state.duplicateResultCards[1].getRank()).toEqual(Rank.Ace);
-    expect(state.duplicateResultCards[2].getRank()).toEqual(Rank.Five);
-    expect(state.duplicateResultCards[3].getRank()).toEqual(Rank.Five);
+    expect(state.duplicateResultCards[0].rank).toEqual(Rank.Ace);
+    expect(state.duplicateResultCards[1].rank).toEqual(Rank.Ace);
+    expect(state.duplicateResultCards[2].rank).toEqual(Rank.Five);
+    expect(state.duplicateResultCards[3].rank).toEqual(Rank.Five);
     expect(state.duplicateKickerCards).toEqual([
-      new Card(Suit.Heart, Rank.King),
+      cardObject(Suit.Heart, Rank.King),
     ]);
   });
 
@@ -666,73 +668,73 @@ describe("detectPokerHandResult_Detect_Duplicates suite", () => {
     // Test two pair
     state = initializePokerHandState();
     cards = [
-      new Card(Suit.Club, Rank.Five),
-      new Card(Suit.Diamond, Rank.Five),
-      new Card(Suit.Spade, Rank.Five),
-      new Card(Suit.Diamond, Rank.Seven),
-      new Card(Suit.Heart, Rank.Nine),
-      new Card(Suit.Heart, Rank.Jack),
-      new Card(Suit.Heart, Rank.King),
+      cardObject(Suit.Club, Rank.Five),
+      cardObject(Suit.Diamond, Rank.Five),
+      cardObject(Suit.Spade, Rank.Five),
+      cardObject(Suit.Diamond, Rank.Seven),
+      cardObject(Suit.Heart, Rank.Nine),
+      cardObject(Suit.Heart, Rank.Jack),
+      cardObject(Suit.Heart, Rank.King),
     ];
     detectPokerHandResult_Detect_Duplicates(state, cards);
     expect(state.duplicateResult).toEqual(PokerHandResult.ThreeOfAKind);
     expect(state.duplicateResultCards.length).toEqual(3);
-    expect(state.duplicateResultCards[0].getRank()).toEqual(Rank.Five);
-    expect(state.duplicateResultCards[1].getRank()).toEqual(Rank.Five);
-    expect(state.duplicateResultCards[2].getRank()).toEqual(Rank.Five);
+    expect(state.duplicateResultCards[0].rank).toEqual(Rank.Five);
+    expect(state.duplicateResultCards[1].rank).toEqual(Rank.Five);
+    expect(state.duplicateResultCards[2].rank).toEqual(Rank.Five);
     expect(state.duplicateKickerCards).toEqual([
-      new Card(Suit.Heart, Rank.King),
-      new Card(Suit.Heart, Rank.Jack),
+      cardObject(Suit.Heart, Rank.King),
+      cardObject(Suit.Heart, Rank.Jack),
     ]);
   });
 
   test("full house", () => {
     state = initializePokerHandState();
     cards = [
-      new Card(Suit.Club, Rank.Ace),
-      new Card(Suit.Heart, Rank.Ace),
-      new Card(Suit.Club, Rank.Five),
-      new Card(Suit.Diamond, Rank.Five),
-      new Card(Suit.Heart, Rank.Five),
-      new Card(Suit.Heart, Rank.Jack),
-      new Card(Suit.Heart, Rank.King),
+      cardObject(Suit.Club, Rank.Ace),
+      cardObject(Suit.Heart, Rank.Ace),
+      cardObject(Suit.Club, Rank.Five),
+      cardObject(Suit.Diamond, Rank.Five),
+      cardObject(Suit.Heart, Rank.Five),
+      cardObject(Suit.Heart, Rank.Jack),
+      cardObject(Suit.Heart, Rank.King),
     ];
     detectPokerHandResult_Detect_Duplicates(state, cards);
     expect(state.duplicateResult).toEqual(PokerHandResult.FullHouse);
     expect(state.duplicateResultCards.length).toEqual(5);
-    expect(state.duplicateResultCards[0].getRank()).toEqual(Rank.Five);
-    expect(state.duplicateResultCards[1].getRank()).toEqual(Rank.Five);
-    expect(state.duplicateResultCards[2].getRank()).toEqual(Rank.Five);
-    expect(state.duplicateResultCards[3].getRank()).toEqual(Rank.Ace);
-    expect(state.duplicateResultCards[4].getRank()).toEqual(Rank.Ace);
+    expect(state.duplicateResultCards[0].rank).toEqual(Rank.Five);
+    expect(state.duplicateResultCards[1].rank).toEqual(Rank.Five);
+    expect(state.duplicateResultCards[2].rank).toEqual(Rank.Five);
+    expect(state.duplicateResultCards[3].rank).toEqual(Rank.Ace);
+    expect(state.duplicateResultCards[4].rank).toEqual(Rank.Ace);
     expect(state.duplicateKickerCards).toEqual([]);
   });
 
   test("four of a kind", () => {
     state = initializePokerHandState();
     cards = [
-      new Card(Suit.Club, Rank.Ace),
-      new Card(Suit.Heart, Rank.Ace),
-      new Card(Suit.Diamond, Rank.Ace),
-      new Card(Suit.Spade, Rank.Ace),
-      new Card(Suit.Heart, Rank.Five),
-      new Card(Suit.Heart, Rank.Jack),
-      new Card(Suit.Heart, Rank.King),
+      cardObject(Suit.Club, Rank.Ace),
+      cardObject(Suit.Heart, Rank.Ace),
+      cardObject(Suit.Diamond, Rank.Ace),
+      cardObject(Suit.Spade, Rank.Ace),
+      cardObject(Suit.Heart, Rank.Five),
+      cardObject(Suit.Heart, Rank.Jack),
+      cardObject(Suit.Heart, Rank.King),
     ];
     detectPokerHandResult_Detect_Duplicates(state, cards);
     expect(state.duplicateResult).toEqual(PokerHandResult.FourOfAKind);
     expect(state.duplicateResultCards.length).toEqual(4);
-    expect(state.duplicateResultCards[0].getRank()).toEqual(Rank.Ace);
-    expect(state.duplicateResultCards[1].getRank()).toEqual(Rank.Ace);
-    expect(state.duplicateResultCards[2].getRank()).toEqual(Rank.Ace);
-    expect(state.duplicateResultCards[3].getRank()).toEqual(Rank.Ace);
-    cards = [new Card(Suit.Heart, Rank.King)];
+    expect(state.duplicateResultCards[0].rank).toEqual(Rank.Ace);
+    expect(state.duplicateResultCards[1].rank).toEqual(Rank.Ace);
+    expect(state.duplicateResultCards[2].rank).toEqual(Rank.Ace);
+    expect(state.duplicateResultCards[3].rank).toEqual(Rank.Ace);
+    cards = [cardObject(Suit.Heart, Rank.King)];
   });
 });
 
 describe("detectPokerHandResult_Detect_Flush suit", () => {
   let state: PokerHandState;
-  let cards: Array<Card>;
+  let cards: Array<ICard>;
 
   test("empty card set", () => {
     state = initializePokerHandState();
@@ -745,13 +747,13 @@ describe("detectPokerHandResult_Detect_Flush suit", () => {
 
   test("no flush", () => {
     cards = [
-      new Card(Suit.Club, Rank.Ace),
-      new Card(Suit.Diamond, Rank.Three),
-      new Card(Suit.Heart, Rank.Five),
-      new Card(Suit.Spade, Rank.Seven),
-      new Card(Suit.Club, Rank.Nine),
-      new Card(Suit.Diamond, Rank.Jack),
-      new Card(Suit.Heart, Rank.King),
+      cardObject(Suit.Club, Rank.Ace),
+      cardObject(Suit.Diamond, Rank.Three),
+      cardObject(Suit.Heart, Rank.Five),
+      cardObject(Suit.Spade, Rank.Seven),
+      cardObject(Suit.Club, Rank.Nine),
+      cardObject(Suit.Diamond, Rank.Jack),
+      cardObject(Suit.Heart, Rank.King),
     ];
     state = initializePokerHandState();
     detectPokerHandResult_Detect_Flush(state, cards);
@@ -761,55 +763,55 @@ describe("detectPokerHandResult_Detect_Flush suit", () => {
 
   test("single flush", () => {
     cards = [
-      new Card(Suit.Club, Rank.Ace),
-      new Card(Suit.Diamond, Rank.Three),
-      new Card(Suit.Club, Rank.Five),
-      new Card(Suit.Spade, Rank.Seven),
-      new Card(Suit.Club, Rank.Nine),
-      new Card(Suit.Club, Rank.Jack),
-      new Card(Suit.Club, Rank.King),
+      cardObject(Suit.Club, Rank.Ace),
+      cardObject(Suit.Diamond, Rank.Three),
+      cardObject(Suit.Club, Rank.Five),
+      cardObject(Suit.Spade, Rank.Seven),
+      cardObject(Suit.Club, Rank.Nine),
+      cardObject(Suit.Club, Rank.Jack),
+      cardObject(Suit.Club, Rank.King),
     ];
     detectPokerHandResult_Detect_Flush(state, cards);
     expect(state.flushResult).toEqual(PokerHandResult.Flush);
     expect(state.flushResultCards.length).toEqual(5);
-    expect(state.flushResultCards[0].getRank()).toEqual(Rank.Ace);
-    expect(state.flushResultCards[1].getRank()).toEqual(Rank.King);
-    expect(state.flushResultCards[2].getRank()).toEqual(Rank.Jack);
-    expect(state.flushResultCards[3].getRank()).toEqual(Rank.Nine);
-    expect(state.flushResultCards[4].getRank()).toEqual(Rank.Five);
-    state.flushResultCards.forEach((card: Card) => {
-      expect(card.getSuit() === Suit.Club);
+    expect(state.flushResultCards[0].rank).toEqual(Rank.Ace);
+    expect(state.flushResultCards[1].rank).toEqual(Rank.King);
+    expect(state.flushResultCards[2].rank).toEqual(Rank.Jack);
+    expect(state.flushResultCards[3].rank).toEqual(Rank.Nine);
+    expect(state.flushResultCards[4].rank).toEqual(Rank.Five);
+    state.flushResultCards.forEach((card: ICard) => {
+      expect(card.suit === Suit.Club);
     });
   });
 
   test("multiple flushes", () => {
     cards = [
-      new Card(Suit.Club, Rank.Ace),
-      new Card(Suit.Club, Rank.Three),
-      new Card(Suit.Club, Rank.Five),
-      new Card(Suit.Club, Rank.Seven),
-      new Card(Suit.Club, Rank.Nine),
-      new Card(Suit.Club, Rank.Jack),
-      new Card(Suit.Club, Rank.King),
+      cardObject(Suit.Club, Rank.Ace),
+      cardObject(Suit.Club, Rank.Three),
+      cardObject(Suit.Club, Rank.Five),
+      cardObject(Suit.Club, Rank.Seven),
+      cardObject(Suit.Club, Rank.Nine),
+      cardObject(Suit.Club, Rank.Jack),
+      cardObject(Suit.Club, Rank.King),
     ];
     // In case of multiple flushes, the highest cards should be kept
     detectPokerHandResult_Detect_Flush(state, cards);
     expect(state.flushResult).toEqual(PokerHandResult.Flush);
     expect(state.flushResultCards.length).toEqual(5);
-    expect(state.flushResultCards[0].getRank()).toEqual(Rank.Ace);
-    expect(state.flushResultCards[1].getRank()).toEqual(Rank.King);
-    expect(state.flushResultCards[2].getRank()).toEqual(Rank.Jack);
-    expect(state.flushResultCards[3].getRank()).toEqual(Rank.Nine);
-    expect(state.flushResultCards[4].getRank()).toEqual(Rank.Seven);
-    state.flushResultCards.forEach((card: Card) => {
-      expect(card.getSuit() === Suit.Club);
+    expect(state.flushResultCards[0].rank).toEqual(Rank.Ace);
+    expect(state.flushResultCards[1].rank).toEqual(Rank.King);
+    expect(state.flushResultCards[2].rank).toEqual(Rank.Jack);
+    expect(state.flushResultCards[3].rank).toEqual(Rank.Nine);
+    expect(state.flushResultCards[4].rank).toEqual(Rank.Seven);
+    state.flushResultCards.forEach((card: ICard) => {
+      expect(card.suit === Suit.Club);
     });
   });
 });
 
 describe("detectPokerHandResult_Detect_Straight suite", () => {
   let state: PokerHandState;
-  let cards: Array<Card>;
+  let cards: Array<ICard>;
 
   test("empty card set", () => {
     cards = [];
@@ -823,13 +825,13 @@ describe("detectPokerHandResult_Detect_Straight suite", () => {
 
   test("consecutive cards, but not straight", () => {
     cards = [
-      new Card(Suit.Club, Rank.Ace),
-      new Card(Suit.Club, Rank.Two),
-      new Card(Suit.Club, Rank.Three),
-      new Card(Suit.Club, Rank.Four),
-      new Card(Suit.Club, Rank.Six),
-      new Card(Suit.Club, Rank.Seven),
-      new Card(Suit.Club, Rank.Eight),
+      cardObject(Suit.Club, Rank.Ace),
+      cardObject(Suit.Club, Rank.Two),
+      cardObject(Suit.Club, Rank.Three),
+      cardObject(Suit.Club, Rank.Four),
+      cardObject(Suit.Club, Rank.Six),
+      cardObject(Suit.Club, Rank.Seven),
+      cardObject(Suit.Club, Rank.Eight),
     ];
     state = initializePokerHandState();
     detectPokerHandResult_Detect_Straight(state, cards);
@@ -839,146 +841,146 @@ describe("detectPokerHandResult_Detect_Straight suite", () => {
 
   test("ace low straight", () => {
     cards = [
-      new Card(Suit.Heart, Rank.Ace),
-      new Card(Suit.Club, Rank.Two),
-      new Card(Suit.Club, Rank.Three),
-      new Card(Suit.Club, Rank.Four),
-      new Card(Suit.Club, Rank.Five),
-      new Card(Suit.Club, Rank.Seven),
-      new Card(Suit.Club, Rank.Eight),
+      cardObject(Suit.Heart, Rank.Ace),
+      cardObject(Suit.Club, Rank.Two),
+      cardObject(Suit.Club, Rank.Three),
+      cardObject(Suit.Club, Rank.Four),
+      cardObject(Suit.Club, Rank.Five),
+      cardObject(Suit.Club, Rank.Seven),
+      cardObject(Suit.Club, Rank.Eight),
     ];
     state = initializePokerHandState();
     detectPokerHandResult_Detect_Straight(state, cards);
     expect(state.straightResult).toEqual(PokerHandResult.Straight);
-    expect(state.straightResultCards[0].getRank()).toEqual(Rank.Ace);
-    expect(state.straightResultCards[1].getRank()).toEqual(Rank.Two);
-    expect(state.straightResultCards[2].getRank()).toEqual(Rank.Three);
-    expect(state.straightResultCards[3].getRank()).toEqual(Rank.Four);
-    expect(state.straightResultCards[4].getRank()).toEqual(Rank.Five);
+    expect(state.straightResultCards[0].rank).toEqual(Rank.Ace);
+    expect(state.straightResultCards[1].rank).toEqual(Rank.Two);
+    expect(state.straightResultCards[2].rank).toEqual(Rank.Three);
+    expect(state.straightResultCards[3].rank).toEqual(Rank.Four);
+    expect(state.straightResultCards[4].rank).toEqual(Rank.Five);
   });
 
   test("ace high straight", () => {
     cards = [
-      new Card(Suit.Heart, Rank.Ace),
-      new Card(Suit.Club, Rank.King),
-      new Card(Suit.Club, Rank.Queen),
-      new Card(Suit.Club, Rank.Jack),
-      new Card(Suit.Club, Rank.Ten),
-      new Card(Suit.Club, Rank.Seven),
-      new Card(Suit.Club, Rank.Eight),
+      cardObject(Suit.Heart, Rank.Ace),
+      cardObject(Suit.Club, Rank.King),
+      cardObject(Suit.Club, Rank.Queen),
+      cardObject(Suit.Club, Rank.Jack),
+      cardObject(Suit.Club, Rank.Ten),
+      cardObject(Suit.Club, Rank.Seven),
+      cardObject(Suit.Club, Rank.Eight),
     ];
     state = initializePokerHandState();
     detectPokerHandResult_Detect_Straight(state, cards);
     expect(state.straightResult).toEqual(PokerHandResult.Straight);
-    expect(state.straightResultCards[0].getRank()).toEqual(Rank.Ten);
-    expect(state.straightResultCards[1].getRank()).toEqual(Rank.Jack);
-    expect(state.straightResultCards[2].getRank()).toEqual(Rank.Queen);
-    expect(state.straightResultCards[3].getRank()).toEqual(Rank.King);
-    expect(state.straightResultCards[4].getRank()).toEqual(Rank.Ace);
+    expect(state.straightResultCards[0].rank).toEqual(Rank.Ten);
+    expect(state.straightResultCards[1].rank).toEqual(Rank.Jack);
+    expect(state.straightResultCards[2].rank).toEqual(Rank.Queen);
+    expect(state.straightResultCards[3].rank).toEqual(Rank.King);
+    expect(state.straightResultCards[4].rank).toEqual(Rank.Ace);
   });
 
   test("multiple straights high", () => {
     cards = [
-      new Card(Suit.Heart, Rank.Ace),
-      new Card(Suit.Club, Rank.King),
-      new Card(Suit.Club, Rank.Queen),
-      new Card(Suit.Club, Rank.Jack),
-      new Card(Suit.Club, Rank.Ten),
-      new Card(Suit.Club, Rank.Nine),
-      new Card(Suit.Club, Rank.Eight),
+      cardObject(Suit.Heart, Rank.Ace),
+      cardObject(Suit.Club, Rank.King),
+      cardObject(Suit.Club, Rank.Queen),
+      cardObject(Suit.Club, Rank.Jack),
+      cardObject(Suit.Club, Rank.Ten),
+      cardObject(Suit.Club, Rank.Nine),
+      cardObject(Suit.Club, Rank.Eight),
     ];
     state = initializePokerHandState();
     detectPokerHandResult_Detect_Straight(state, cards);
     expect(state.straightResult).toEqual(PokerHandResult.Straight);
-    expect(state.straightResultCards[0].getRank()).toEqual(Rank.Ten);
-    expect(state.straightResultCards[1].getRank()).toEqual(Rank.Jack);
-    expect(state.straightResultCards[2].getRank()).toEqual(Rank.Queen);
-    expect(state.straightResultCards[3].getRank()).toEqual(Rank.King);
-    expect(state.straightResultCards[4].getRank()).toEqual(Rank.Ace);
+    expect(state.straightResultCards[0].rank).toEqual(Rank.Ten);
+    expect(state.straightResultCards[1].rank).toEqual(Rank.Jack);
+    expect(state.straightResultCards[2].rank).toEqual(Rank.Queen);
+    expect(state.straightResultCards[3].rank).toEqual(Rank.King);
+    expect(state.straightResultCards[4].rank).toEqual(Rank.Ace);
   });
 
   test("multiple straights low", () => {
     cards = [
-      new Card(Suit.Heart, Rank.Ace),
-      new Card(Suit.Club, Rank.Two),
-      new Card(Suit.Club, Rank.Three),
-      new Card(Suit.Club, Rank.Four),
-      new Card(Suit.Club, Rank.Five),
-      new Card(Suit.Club, Rank.Six),
-      new Card(Suit.Heart, Rank.Seven),
+      cardObject(Suit.Heart, Rank.Ace),
+      cardObject(Suit.Club, Rank.Two),
+      cardObject(Suit.Club, Rank.Three),
+      cardObject(Suit.Club, Rank.Four),
+      cardObject(Suit.Club, Rank.Five),
+      cardObject(Suit.Club, Rank.Six),
+      cardObject(Suit.Heart, Rank.Seven),
     ];
     state = initializePokerHandState();
     detectPokerHandResult_Detect_Straight(state, cards);
     expect(state.straightResult).toEqual(PokerHandResult.Straight);
-    expect(state.straightResultCards[0].getRank()).toEqual(Rank.Three);
-    expect(state.straightResultCards[1].getRank()).toEqual(Rank.Four);
-    expect(state.straightResultCards[2].getRank()).toEqual(Rank.Five);
-    expect(state.straightResultCards[3].getRank()).toEqual(Rank.Six);
-    expect(state.straightResultCards[4].getRank()).toEqual(Rank.Seven);
+    expect(state.straightResultCards[0].rank).toEqual(Rank.Three);
+    expect(state.straightResultCards[1].rank).toEqual(Rank.Four);
+    expect(state.straightResultCards[2].rank).toEqual(Rank.Five);
+    expect(state.straightResultCards[3].rank).toEqual(Rank.Six);
+    expect(state.straightResultCards[4].rank).toEqual(Rank.Seven);
   });
 
   test("straight flush", () => {
     cards = [
-      new Card(Suit.Diamond, Rank.Ace),
-      new Card(Suit.Club, Rank.Four),
-      new Card(Suit.Club, Rank.Five),
-      new Card(Suit.Club, Rank.Six),
-      new Card(Suit.Club, Rank.Seven),
-      new Card(Suit.Club, Rank.Eight),
-      new Card(Suit.Heart, Rank.Ten),
+      cardObject(Suit.Diamond, Rank.Ace),
+      cardObject(Suit.Club, Rank.Four),
+      cardObject(Suit.Club, Rank.Five),
+      cardObject(Suit.Club, Rank.Six),
+      cardObject(Suit.Club, Rank.Seven),
+      cardObject(Suit.Club, Rank.Eight),
+      cardObject(Suit.Heart, Rank.Ten),
     ];
     state = initializePokerHandState();
     detectPokerHandResult_Detect_Straight(state, cards);
     expect(state.straightResult).toEqual(PokerHandResult.StraightFlush);
-    expect(state.straightResultCards[0].getRank()).toEqual(Rank.Four);
-    expect(state.straightResultCards[1].getRank()).toEqual(Rank.Five);
-    expect(state.straightResultCards[2].getRank()).toEqual(Rank.Six);
-    expect(state.straightResultCards[3].getRank()).toEqual(Rank.Seven);
-    expect(state.straightResultCards[4].getRank()).toEqual(Rank.Eight);
-    state.flushResultCards.forEach((card: Card) => {
-      expect(card.getSuit() === Suit.Club);
+    expect(state.straightResultCards[0].rank).toEqual(Rank.Four);
+    expect(state.straightResultCards[1].rank).toEqual(Rank.Five);
+    expect(state.straightResultCards[2].rank).toEqual(Rank.Six);
+    expect(state.straightResultCards[3].rank).toEqual(Rank.Seven);
+    expect(state.straightResultCards[4].rank).toEqual(Rank.Eight);
+    state.flushResultCards.forEach((card: ICard) => {
+      expect(card.suit === Suit.Club);
     });
   });
 
   test("royal flush", () => {
     cards = [
-      new Card(Suit.Spade, Rank.Ace),
-      new Card(Suit.Spade, Rank.King),
-      new Card(Suit.Spade, Rank.Queen),
-      new Card(Suit.Spade, Rank.Jack),
-      new Card(Suit.Spade, Rank.Ten),
-      new Card(Suit.Heart, Rank.Ace),
-      new Card(Suit.Heart, Rank.King),
+      cardObject(Suit.Spade, Rank.Ace),
+      cardObject(Suit.Spade, Rank.King),
+      cardObject(Suit.Spade, Rank.Queen),
+      cardObject(Suit.Spade, Rank.Jack),
+      cardObject(Suit.Spade, Rank.Ten),
+      cardObject(Suit.Heart, Rank.Ace),
+      cardObject(Suit.Heart, Rank.King),
     ];
     state = initializePokerHandState();
     detectPokerHandResult_Detect_Straight(state, cards);
     expect(state.straightResult).toEqual(PokerHandResult.RoyalFlush);
-    expect(state.straightResultCards[0].getRank()).toEqual(Rank.Ten);
-    expect(state.straightResultCards[1].getRank()).toEqual(Rank.Jack);
-    expect(state.straightResultCards[2].getRank()).toEqual(Rank.Queen);
-    expect(state.straightResultCards[3].getRank()).toEqual(Rank.King);
-    expect(state.straightResultCards[4].getRank()).toEqual(Rank.Ace);
-    state.flushResultCards.forEach((card: Card) => {
-      expect(card.getSuit() === Suit.Spade);
+    expect(state.straightResultCards[0].rank).toEqual(Rank.Ten);
+    expect(state.straightResultCards[1].rank).toEqual(Rank.Jack);
+    expect(state.straightResultCards[2].rank).toEqual(Rank.Queen);
+    expect(state.straightResultCards[3].rank).toEqual(Rank.King);
+    expect(state.straightResultCards[4].rank).toEqual(Rank.Ace);
+    state.flushResultCards.forEach((card: ICard) => {
+      expect(card.suit === Suit.Spade);
     });
   });
 });
 
 describe("detectPokerHandResult_DetermineResultValue_Duplicates suite", () => {
-  let cards: Array<Card>;
+  let cards: Array<ICard>;
   let result: PokerHandResult;
   let duplicateRanks: Array<Rank>;
 
   test("single pair", () => {
     result = PokerHandResult.Pair;
     cards = [
-      new Card(Suit.Club, Rank.Ace),
-      new Card(Suit.Diamond, Rank.Ace),
-      new Card(Suit.Club, Rank.Five),
-      new Card(Suit.Diamond, Rank.Seven),
-      new Card(Suit.Heart, Rank.Nine),
-      new Card(Suit.Heart, Rank.Jack),
-      new Card(Suit.Heart, Rank.King),
+      cardObject(Suit.Club, Rank.Ace),
+      cardObject(Suit.Diamond, Rank.Ace),
+      cardObject(Suit.Club, Rank.Five),
+      cardObject(Suit.Diamond, Rank.Seven),
+      cardObject(Suit.Heart, Rank.Nine),
+      cardObject(Suit.Heart, Rank.Jack),
+      cardObject(Suit.Heart, Rank.King),
     ];
     duplicateRanks = detectPokerHandResult_DetermineResultValue_Duplicates(
       cards,
@@ -991,13 +993,13 @@ describe("detectPokerHandResult_DetermineResultValue_Duplicates suite", () => {
   test("two pair", () => {
     result = PokerHandResult.TwoPair;
     cards = [
-      new Card(Suit.Club, Rank.Ace),
-      new Card(Suit.Club, Rank.Ace),
-      new Card(Suit.Club, Rank.Five),
-      new Card(Suit.Diamond, Rank.Five),
-      new Card(Suit.Heart, Rank.Nine),
-      new Card(Suit.Heart, Rank.Jack),
-      new Card(Suit.Heart, Rank.King),
+      cardObject(Suit.Club, Rank.Ace),
+      cardObject(Suit.Club, Rank.Ace),
+      cardObject(Suit.Club, Rank.Five),
+      cardObject(Suit.Diamond, Rank.Five),
+      cardObject(Suit.Heart, Rank.Nine),
+      cardObject(Suit.Heart, Rank.Jack),
+      cardObject(Suit.Heart, Rank.King),
     ];
     duplicateRanks = detectPokerHandResult_DetermineResultValue_Duplicates(
       cards,
@@ -1011,13 +1013,13 @@ describe("detectPokerHandResult_DetermineResultValue_Duplicates suite", () => {
   test("three of a kind", () => {
     result = PokerHandResult.ThreeOfAKind;
     cards = [
-      new Card(Suit.Club, Rank.Five),
-      new Card(Suit.Diamond, Rank.Five),
-      new Card(Suit.Spade, Rank.Five),
-      new Card(Suit.Diamond, Rank.Seven),
-      new Card(Suit.Heart, Rank.Nine),
-      new Card(Suit.Heart, Rank.Jack),
-      new Card(Suit.Heart, Rank.King),
+      cardObject(Suit.Club, Rank.Five),
+      cardObject(Suit.Diamond, Rank.Five),
+      cardObject(Suit.Spade, Rank.Five),
+      cardObject(Suit.Diamond, Rank.Seven),
+      cardObject(Suit.Heart, Rank.Nine),
+      cardObject(Suit.Heart, Rank.Jack),
+      cardObject(Suit.Heart, Rank.King),
     ];
     duplicateRanks = detectPokerHandResult_DetermineResultValue_Duplicates(
       cards,
@@ -1030,13 +1032,13 @@ describe("detectPokerHandResult_DetermineResultValue_Duplicates suite", () => {
   test("full house", () => {
     result = PokerHandResult.FullHouse;
     cards = [
-      new Card(Suit.Club, Rank.Ace),
-      new Card(Suit.Heart, Rank.Ace),
-      new Card(Suit.Club, Rank.Five),
-      new Card(Suit.Diamond, Rank.Five),
-      new Card(Suit.Heart, Rank.Five),
-      new Card(Suit.Heart, Rank.Jack),
-      new Card(Suit.Heart, Rank.King),
+      cardObject(Suit.Club, Rank.Ace),
+      cardObject(Suit.Heart, Rank.Ace),
+      cardObject(Suit.Club, Rank.Five),
+      cardObject(Suit.Diamond, Rank.Five),
+      cardObject(Suit.Heart, Rank.Five),
+      cardObject(Suit.Heart, Rank.Jack),
+      cardObject(Suit.Heart, Rank.King),
     ];
     duplicateRanks = detectPokerHandResult_DetermineResultValue_Duplicates(
       cards,
@@ -1050,13 +1052,13 @@ describe("detectPokerHandResult_DetermineResultValue_Duplicates suite", () => {
   test("four of a kind", () => {
     result = PokerHandResult.FourOfAKind;
     cards = [
-      new Card(Suit.Club, Rank.Ace),
-      new Card(Suit.Heart, Rank.Ace),
-      new Card(Suit.Diamond, Rank.Ace),
-      new Card(Suit.Spade, Rank.Ace),
-      new Card(Suit.Heart, Rank.Five),
-      new Card(Suit.Heart, Rank.Jack),
-      new Card(Suit.Heart, Rank.King),
+      cardObject(Suit.Club, Rank.Ace),
+      cardObject(Suit.Heart, Rank.Ace),
+      cardObject(Suit.Diamond, Rank.Ace),
+      cardObject(Suit.Spade, Rank.Ace),
+      cardObject(Suit.Heart, Rank.Five),
+      cardObject(Suit.Heart, Rank.Jack),
+      cardObject(Suit.Heart, Rank.King),
     ];
     duplicateRanks = detectPokerHandResult_DetermineResultValue_Duplicates(
       cards,
@@ -1069,26 +1071,26 @@ describe("detectPokerHandResult_DetermineResultValue_Duplicates suite", () => {
 
 describe("identifyPokerWinner suite", () => {
   let roundState: PokerRoundState;
-  let riverCards: Array<Card>;
-  let handCardsA: Array<Card>;
-  let handCardsB: Array<Card>;
+  let riverCards: Array<ICard>;
+  let handCardsA: Array<ICard>;
+  let handCardsB: Array<ICard>;
 
   test("A beats B (flush beats straight)", () => {
     roundState = initializePokerRoundState();
     riverCards = [
-      new Card(Suit.Club, Rank.Three),
-      new Card(Suit.Club, Rank.Four),
-      new Card(Suit.Club, Rank.Five),
-      new Card(Suit.Diamond, Rank.Queen),
-      new Card(Suit.Heart, Rank.King),
+      cardObject(Suit.Club, Rank.Three),
+      cardObject(Suit.Club, Rank.Four),
+      cardObject(Suit.Club, Rank.Five),
+      cardObject(Suit.Diamond, Rank.Queen),
+      cardObject(Suit.Heart, Rank.King),
     ];
     handCardsA = [
-      new Card(Suit.Club, Rank.Jack),
-      new Card(Suit.Club, Rank.Ten),
+      cardObject(Suit.Club, Rank.Jack),
+      cardObject(Suit.Club, Rank.Ten),
     ];
     handCardsB = [
-      new Card(Suit.Diamond, Rank.Six),
-      new Card(Suit.Heart, Rank.Seven),
+      cardObject(Suit.Diamond, Rank.Six),
+      cardObject(Suit.Heart, Rank.Seven),
     ];
     identifyPokerWinner(roundState, riverCards, handCardsA, handCardsB);
     expect(roundState.winner).toBe(PokerWinner.HandA);
@@ -1101,19 +1103,19 @@ describe("identifyPokerWinner suite", () => {
   test("B beats A (high card beaten by pair)", () => {
     roundState = initializePokerRoundState();
     riverCards = [
-      new Card(Suit.Club, Rank.Three),
-      new Card(Suit.Club, Rank.Four),
-      new Card(Suit.Club, Rank.Five),
-      new Card(Suit.Diamond, Rank.Queen),
-      new Card(Suit.Heart, Rank.King),
+      cardObject(Suit.Club, Rank.Three),
+      cardObject(Suit.Club, Rank.Four),
+      cardObject(Suit.Club, Rank.Five),
+      cardObject(Suit.Diamond, Rank.Queen),
+      cardObject(Suit.Heart, Rank.King),
     ];
     handCardsA = [
-      new Card(Suit.Diamond, Rank.Jack),
-      new Card(Suit.Heart, Rank.Ten),
+      cardObject(Suit.Diamond, Rank.Jack),
+      cardObject(Suit.Heart, Rank.Ten),
     ];
     handCardsB = [
-      new Card(Suit.Diamond, Rank.Three),
-      new Card(Suit.Heart, Rank.Seven),
+      cardObject(Suit.Diamond, Rank.Three),
+      cardObject(Suit.Heart, Rank.Seven),
     ];
     identifyPokerWinner(roundState, riverCards, handCardsA, handCardsB);
     expect(roundState.winner).toBe(PokerWinner.HandB);
@@ -1126,17 +1128,17 @@ describe("identifyPokerWinner suite", () => {
   test("straight flush comparison", () => {
     roundState = initializePokerRoundState();
     riverCards = [
-      new Card(Suit.Club, Rank.Three),
-      new Card(Suit.Club, Rank.Four),
-      new Card(Suit.Club, Rank.Five),
-      new Card(Suit.Diamond, Rank.Queen),
-      new Card(Suit.Heart, Rank.King),
+      cardObject(Suit.Club, Rank.Three),
+      cardObject(Suit.Club, Rank.Four),
+      cardObject(Suit.Club, Rank.Five),
+      cardObject(Suit.Diamond, Rank.Queen),
+      cardObject(Suit.Heart, Rank.King),
     ];
     handCardsA = [
-      new Card(Suit.Club, Rank.Six),
-      new Card(Suit.Club, Rank.Seven),
+      cardObject(Suit.Club, Rank.Six),
+      cardObject(Suit.Club, Rank.Seven),
     ];
-    handCardsB = [new Card(Suit.Club, Rank.Ace), new Card(Suit.Club, Rank.Two)];
+    handCardsB = [cardObject(Suit.Club, Rank.Ace), cardObject(Suit.Club, Rank.Two)];
     identifyPokerWinner(roundState, riverCards, handCardsA, handCardsB);
     expect(roundState.winner).toBe(PokerWinner.HandA);
     expect(roundState.handStateA.finalResult).toBe(
@@ -1152,19 +1154,19 @@ describe("identifyPokerWinner suite", () => {
   test("four of a kind comparison", () => {
     roundState = initializePokerRoundState();
     riverCards = [
-      new Card(Suit.Club, Rank.Three),
-      new Card(Suit.Diamond, Rank.Three),
-      new Card(Suit.Club, Rank.Five),
-      new Card(Suit.Diamond, Rank.Five),
-      new Card(Suit.Heart, Rank.King),
+      cardObject(Suit.Club, Rank.Three),
+      cardObject(Suit.Diamond, Rank.Three),
+      cardObject(Suit.Club, Rank.Five),
+      cardObject(Suit.Diamond, Rank.Five),
+      cardObject(Suit.Heart, Rank.King),
     ];
     handCardsA = [
-      new Card(Suit.Heart, Rank.Five),
-      new Card(Suit.Spade, Rank.Five),
+      cardObject(Suit.Heart, Rank.Five),
+      cardObject(Suit.Spade, Rank.Five),
     ];
     handCardsB = [
-      new Card(Suit.Heart, Rank.Three),
-      new Card(Suit.Spade, Rank.Three),
+      cardObject(Suit.Heart, Rank.Three),
+      cardObject(Suit.Spade, Rank.Three),
     ];
     identifyPokerWinner(roundState, riverCards, handCardsA, handCardsB);
     expect(roundState.winner).toBe(PokerWinner.HandA);
@@ -1177,19 +1179,19 @@ describe("identifyPokerWinner suite", () => {
   test("full house triple comparison", () => {
     roundState = initializePokerRoundState();
     riverCards = [
-      new Card(Suit.Club, Rank.Three),
-      new Card(Suit.Diamond, Rank.Three),
-      new Card(Suit.Club, Rank.Five),
-      new Card(Suit.Diamond, Rank.Five),
-      new Card(Suit.Heart, Rank.King),
+      cardObject(Suit.Club, Rank.Three),
+      cardObject(Suit.Diamond, Rank.Three),
+      cardObject(Suit.Club, Rank.Five),
+      cardObject(Suit.Diamond, Rank.Five),
+      cardObject(Suit.Heart, Rank.King),
     ];
     handCardsA = [
-      new Card(Suit.Heart, Rank.Five),
-      new Card(Suit.Spade, Rank.King),
+      cardObject(Suit.Heart, Rank.Five),
+      cardObject(Suit.Spade, Rank.King),
     ];
     handCardsB = [
-      new Card(Suit.Heart, Rank.Three),
-      new Card(Suit.Spade, Rank.King),
+      cardObject(Suit.Heart, Rank.Three),
+      cardObject(Suit.Spade, Rank.King),
     ];
     identifyPokerWinner(roundState, riverCards, handCardsA, handCardsB);
     expect(roundState.winner).toBe(PokerWinner.HandA);
@@ -1202,19 +1204,19 @@ describe("identifyPokerWinner suite", () => {
   test("full house pair comparison", () => {
     roundState = initializePokerRoundState();
     riverCards = [
-      new Card(Suit.Club, Rank.Three),
-      new Card(Suit.Diamond, Rank.Three),
-      new Card(Suit.Club, Rank.Ten),
-      new Card(Suit.Diamond, Rank.Jack),
-      new Card(Suit.Heart, Rank.King),
+      cardObject(Suit.Club, Rank.Three),
+      cardObject(Suit.Diamond, Rank.Three),
+      cardObject(Suit.Club, Rank.Ten),
+      cardObject(Suit.Diamond, Rank.Jack),
+      cardObject(Suit.Heart, Rank.King),
     ];
     handCardsA = [
-      new Card(Suit.Heart, Rank.Three),
-      new Card(Suit.Spade, Rank.King),
+      cardObject(Suit.Heart, Rank.Three),
+      cardObject(Suit.Spade, Rank.King),
     ];
     handCardsB = [
-      new Card(Suit.Heart, Rank.Three),
-      new Card(Suit.Spade, Rank.Jack),
+      cardObject(Suit.Heart, Rank.Three),
+      cardObject(Suit.Spade, Rank.Jack),
     ];
     identifyPokerWinner(roundState, riverCards, handCardsA, handCardsB);
     expect(roundState.winner).toBe(PokerWinner.HandA);
@@ -1227,19 +1229,19 @@ describe("identifyPokerWinner suite", () => {
   test("flush comparison", () => {
     roundState = initializePokerRoundState();
     riverCards = [
-      new Card(Suit.Club, Rank.Jack),
-      new Card(Suit.Club, Rank.Queen),
-      new Card(Suit.Club, Rank.King),
-      new Card(Suit.Diamond, Rank.Two),
-      new Card(Suit.Heart, Rank.Ten),
+      cardObject(Suit.Club, Rank.Jack),
+      cardObject(Suit.Club, Rank.Queen),
+      cardObject(Suit.Club, Rank.King),
+      cardObject(Suit.Diamond, Rank.Two),
+      cardObject(Suit.Heart, Rank.Ten),
     ];
     handCardsA = [
-      new Card(Suit.Club, Rank.Seven),
-      new Card(Suit.Club, Rank.Eight),
+      cardObject(Suit.Club, Rank.Seven),
+      cardObject(Suit.Club, Rank.Eight),
     ];
     handCardsB = [
-      new Card(Suit.Club, Rank.Five),
-      new Card(Suit.Club, Rank.Six),
+      cardObject(Suit.Club, Rank.Five),
+      cardObject(Suit.Club, Rank.Six),
     ];
     // Tie is broken by cards in the hand - hand A has a higher flush
     identifyPokerWinner(roundState, riverCards, handCardsA, handCardsB);
@@ -1253,19 +1255,19 @@ describe("identifyPokerWinner suite", () => {
   test("straight comparison", () => {
     roundState = initializePokerRoundState();
     riverCards = [
-      new Card(Suit.Club, Rank.Seven),
-      new Card(Suit.Diamond, Rank.Eight),
-      new Card(Suit.Club, Rank.Nine),
-      new Card(Suit.Diamond, Rank.Jack),
-      new Card(Suit.Heart, Rank.Queen),
+      cardObject(Suit.Club, Rank.Seven),
+      cardObject(Suit.Diamond, Rank.Eight),
+      cardObject(Suit.Club, Rank.Nine),
+      cardObject(Suit.Diamond, Rank.Jack),
+      cardObject(Suit.Heart, Rank.Queen),
     ];
     handCardsA = [
-      new Card(Suit.Heart, Rank.Ten),
-      new Card(Suit.Spade, Rank.Seven),
+      cardObject(Suit.Heart, Rank.Ten),
+      cardObject(Suit.Spade, Rank.Seven),
     ];
     handCardsB = [
-      new Card(Suit.Heart, Rank.Five),
-      new Card(Suit.Spade, Rank.Six),
+      cardObject(Suit.Heart, Rank.Five),
+      cardObject(Suit.Spade, Rank.Six),
     ];
     identifyPokerWinner(roundState, riverCards, handCardsA, handCardsB);
     expect(roundState.winner).toBe(PokerWinner.HandA);
@@ -1278,19 +1280,19 @@ describe("identifyPokerWinner suite", () => {
   test("three of a kind comparison", () => {
     roundState = initializePokerRoundState();
     riverCards = [
-      new Card(Suit.Club, Rank.Six),
-      new Card(Suit.Club, Rank.Seven),
-      new Card(Suit.Diamond, Rank.Two),
-      new Card(Suit.Diamond, Rank.Ten),
-      new Card(Suit.Heart, Rank.Queen),
+      cardObject(Suit.Club, Rank.Six),
+      cardObject(Suit.Club, Rank.Seven),
+      cardObject(Suit.Diamond, Rank.Two),
+      cardObject(Suit.Diamond, Rank.Ten),
+      cardObject(Suit.Heart, Rank.Queen),
     ];
     handCardsA = [
-      new Card(Suit.Heart, Rank.Seven),
-      new Card(Suit.Spade, Rank.Seven),
+      cardObject(Suit.Heart, Rank.Seven),
+      cardObject(Suit.Spade, Rank.Seven),
     ];
     handCardsB = [
-      new Card(Suit.Heart, Rank.Six),
-      new Card(Suit.Spade, Rank.Six),
+      cardObject(Suit.Heart, Rank.Six),
+      cardObject(Suit.Spade, Rank.Six),
     ];
     identifyPokerWinner(roundState, riverCards, handCardsA, handCardsB);
     expect(roundState.winner).toBe(PokerWinner.HandA);
@@ -1307,19 +1309,19 @@ describe("identifyPokerWinner suite", () => {
   test("three of a kind comparison, primary kicker", () => {
     roundState = initializePokerRoundState();
     riverCards = [
-      new Card(Suit.Club, Rank.Six),
-      new Card(Suit.Diamond, Rank.Six),
-      new Card(Suit.Club, Rank.Five),
-      new Card(Suit.Diamond, Rank.Four),
-      new Card(Suit.Heart, Rank.Two),
+      cardObject(Suit.Club, Rank.Six),
+      cardObject(Suit.Diamond, Rank.Six),
+      cardObject(Suit.Club, Rank.Five),
+      cardObject(Suit.Diamond, Rank.Four),
+      cardObject(Suit.Heart, Rank.Two),
     ];
     handCardsA = [
-      new Card(Suit.Heart, Rank.Six),
-      new Card(Suit.Heart, Rank.Ace),
+      cardObject(Suit.Heart, Rank.Six),
+      cardObject(Suit.Heart, Rank.Ace),
     ];
     handCardsB = [
-      new Card(Suit.Spade, Rank.Six),
-      new Card(Suit.Spade, Rank.King),
+      cardObject(Suit.Spade, Rank.Six),
+      cardObject(Suit.Spade, Rank.King),
     ];
     identifyPokerWinner(roundState, riverCards, handCardsA, handCardsB);
     expect(roundState.winner).toBe(PokerWinner.HandA);
@@ -1339,19 +1341,19 @@ describe("identifyPokerWinner suite", () => {
   test("three of a kind comparison, secondary kicker", () => {
     roundState = initializePokerRoundState();
     riverCards = [
-      new Card(Suit.Club, Rank.Six),
-      new Card(Suit.Diamond, Rank.Six),
-      new Card(Suit.Club, Rank.Ace),
-      new Card(Suit.Diamond, Rank.Four),
-      new Card(Suit.Heart, Rank.Two),
+      cardObject(Suit.Club, Rank.Six),
+      cardObject(Suit.Diamond, Rank.Six),
+      cardObject(Suit.Club, Rank.Ace),
+      cardObject(Suit.Diamond, Rank.Four),
+      cardObject(Suit.Heart, Rank.Two),
     ];
     handCardsA = [
-      new Card(Suit.Heart, Rank.Six),
-      new Card(Suit.Heart, Rank.Ten),
+      cardObject(Suit.Heart, Rank.Six),
+      cardObject(Suit.Heart, Rank.Ten),
     ];
     handCardsB = [
-      new Card(Suit.Spade, Rank.Six),
-      new Card(Suit.Spade, Rank.Nine),
+      cardObject(Suit.Spade, Rank.Six),
+      cardObject(Suit.Spade, Rank.Nine),
     ];
     identifyPokerWinner(roundState, riverCards, handCardsA, handCardsB);
     expect(roundState.winner).toBe(PokerWinner.HandA);
@@ -1371,19 +1373,19 @@ describe("identifyPokerWinner suite", () => {
   test("three of a kind comparison, tie", () => {
     roundState = initializePokerRoundState();
     riverCards = [
-      new Card(Suit.Club, Rank.Six),
-      new Card(Suit.Diamond, Rank.Six),
-      new Card(Suit.Club, Rank.Ace),
-      new Card(Suit.Diamond, Rank.King),
-      new Card(Suit.Heart, Rank.Two),
+      cardObject(Suit.Club, Rank.Six),
+      cardObject(Suit.Diamond, Rank.Six),
+      cardObject(Suit.Club, Rank.Ace),
+      cardObject(Suit.Diamond, Rank.King),
+      cardObject(Suit.Heart, Rank.Two),
     ];
     handCardsA = [
-      new Card(Suit.Heart, Rank.Six),
-      new Card(Suit.Heart, Rank.Ten),
+      cardObject(Suit.Heart, Rank.Six),
+      cardObject(Suit.Heart, Rank.Ten),
     ];
     handCardsB = [
-      new Card(Suit.Spade, Rank.Six),
-      new Card(Suit.Spade, Rank.Nine),
+      cardObject(Suit.Spade, Rank.Six),
+      cardObject(Suit.Spade, Rank.Nine),
     ];
     identifyPokerWinner(roundState, riverCards, handCardsA, handCardsB);
     expect(roundState.winner).toBe(PokerWinner.Tie);
@@ -1400,19 +1402,19 @@ describe("identifyPokerWinner suite", () => {
   test("two pair comparison", () => {
     roundState = initializePokerRoundState();
     riverCards = [
-      new Card(Suit.Club, Rank.Ace),
-      new Card(Suit.Diamond, Rank.Queen),
-      new Card(Suit.Club, Rank.Ten),
-      new Card(Suit.Diamond, Rank.Eight),
-      new Card(Suit.Heart, Rank.Two),
+      cardObject(Suit.Club, Rank.Ace),
+      cardObject(Suit.Diamond, Rank.Queen),
+      cardObject(Suit.Club, Rank.Ten),
+      cardObject(Suit.Diamond, Rank.Eight),
+      cardObject(Suit.Heart, Rank.Two),
     ];
     handCardsA = [
-      new Card(Suit.Heart, Rank.Ace),
-      new Card(Suit.Heart, Rank.Queen),
+      cardObject(Suit.Heart, Rank.Ace),
+      cardObject(Suit.Heart, Rank.Queen),
     ];
     handCardsB = [
-      new Card(Suit.Spade, Rank.Queen),
-      new Card(Suit.Spade, Rank.Ten),
+      cardObject(Suit.Spade, Rank.Queen),
+      cardObject(Suit.Spade, Rank.Ten),
     ];
     identifyPokerWinner(roundState, riverCards, handCardsA, handCardsB);
     expect(roundState.winner).toBe(PokerWinner.HandA);
@@ -1425,19 +1427,19 @@ describe("identifyPokerWinner suite", () => {
   test("two pair comparison, kicker", () => {
     roundState = initializePokerRoundState();
     riverCards = [
-      new Card(Suit.Club, Rank.Ace),
-      new Card(Suit.Diamond, Rank.Queen),
-      new Card(Suit.Club, Rank.Queen),
-      new Card(Suit.Diamond, Rank.Eight),
-      new Card(Suit.Heart, Rank.Two),
+      cardObject(Suit.Club, Rank.Ace),
+      cardObject(Suit.Diamond, Rank.Queen),
+      cardObject(Suit.Club, Rank.Queen),
+      cardObject(Suit.Diamond, Rank.Eight),
+      cardObject(Suit.Heart, Rank.Two),
     ];
     handCardsA = [
-      new Card(Suit.Heart, Rank.Ace),
-      new Card(Suit.Heart, Rank.Ten),
+      cardObject(Suit.Heart, Rank.Ace),
+      cardObject(Suit.Heart, Rank.Ten),
     ];
     handCardsB = [
-      new Card(Suit.Spade, Rank.Ace),
-      new Card(Suit.Spade, Rank.Six),
+      cardObject(Suit.Spade, Rank.Ace),
+      cardObject(Suit.Spade, Rank.Six),
     ];
     identifyPokerWinner(roundState, riverCards, handCardsA, handCardsB);
     expect(roundState.winner).toBe(PokerWinner.HandA);
@@ -1453,19 +1455,19 @@ describe("identifyPokerWinner suite", () => {
   test("two pair comparison, tie", () => {
     roundState = initializePokerRoundState();
     riverCards = [
-      new Card(Suit.Club, Rank.Ace),
-      new Card(Suit.Diamond, Rank.Queen),
-      new Card(Suit.Club, Rank.Ten),
-      new Card(Suit.Diamond, Rank.Eight),
-      new Card(Suit.Heart, Rank.Two),
+      cardObject(Suit.Club, Rank.Ace),
+      cardObject(Suit.Diamond, Rank.Queen),
+      cardObject(Suit.Club, Rank.Ten),
+      cardObject(Suit.Diamond, Rank.Eight),
+      cardObject(Suit.Heart, Rank.Two),
     ];
     handCardsA = [
-      new Card(Suit.Heart, Rank.Ace),
-      new Card(Suit.Heart, Rank.Ten),
+      cardObject(Suit.Heart, Rank.Ace),
+      cardObject(Suit.Heart, Rank.Ten),
     ];
     handCardsB = [
-      new Card(Suit.Spade, Rank.Ace),
-      new Card(Suit.Spade, Rank.Ten),
+      cardObject(Suit.Spade, Rank.Ace),
+      cardObject(Suit.Spade, Rank.Ten),
     ];
     identifyPokerWinner(roundState, riverCards, handCardsA, handCardsB);
     expect(roundState.winner).toBe(PokerWinner.Tie);
@@ -1478,19 +1480,19 @@ describe("identifyPokerWinner suite", () => {
   test("pair comparison", () => {
     roundState = initializePokerRoundState();
     riverCards = [
-      new Card(Suit.Club, Rank.Ace),
-      new Card(Suit.Diamond, Rank.Queen),
-      new Card(Suit.Club, Rank.Ten),
-      new Card(Suit.Diamond, Rank.Eight),
-      new Card(Suit.Heart, Rank.Two),
+      cardObject(Suit.Club, Rank.Ace),
+      cardObject(Suit.Diamond, Rank.Queen),
+      cardObject(Suit.Club, Rank.Ten),
+      cardObject(Suit.Diamond, Rank.Eight),
+      cardObject(Suit.Heart, Rank.Two),
     ];
     handCardsA = [
-      new Card(Suit.Heart, Rank.Ace),
-      new Card(Suit.Heart, Rank.Three),
+      cardObject(Suit.Heart, Rank.Ace),
+      cardObject(Suit.Heart, Rank.Three),
     ];
     handCardsB = [
-      new Card(Suit.Spade, Rank.Queen),
-      new Card(Suit.Spade, Rank.Four),
+      cardObject(Suit.Spade, Rank.Queen),
+      cardObject(Suit.Spade, Rank.Four),
     ];
     identifyPokerWinner(roundState, riverCards, handCardsA, handCardsB);
     expect(roundState.winner).toBe(PokerWinner.HandA);
@@ -1503,19 +1505,19 @@ describe("identifyPokerWinner suite", () => {
   test("pair comparison, primary kicker", () => {
     roundState = initializePokerRoundState();
     riverCards = [
-      new Card(Suit.Club, Rank.King),
-      new Card(Suit.Diamond, Rank.Jack),
-      new Card(Suit.Club, Rank.Ten),
-      new Card(Suit.Diamond, Rank.Eight),
-      new Card(Suit.Heart, Rank.Two),
+      cardObject(Suit.Club, Rank.King),
+      cardObject(Suit.Diamond, Rank.Jack),
+      cardObject(Suit.Club, Rank.Ten),
+      cardObject(Suit.Diamond, Rank.Eight),
+      cardObject(Suit.Heart, Rank.Two),
     ];
     handCardsA = [
-      new Card(Suit.Heart, Rank.King),
-      new Card(Suit.Heart, Rank.Queen),
+      cardObject(Suit.Heart, Rank.King),
+      cardObject(Suit.Heart, Rank.Queen),
     ];
     handCardsB = [
-      new Card(Suit.Spade, Rank.King),
-      new Card(Suit.Spade, Rank.Four),
+      cardObject(Suit.Spade, Rank.King),
+      cardObject(Suit.Spade, Rank.Four),
     ];
     identifyPokerWinner(roundState, riverCards, handCardsA, handCardsB);
     expect(roundState.winner).toBe(PokerWinner.HandA);
@@ -1531,19 +1533,19 @@ describe("identifyPokerWinner suite", () => {
   test("pair comparison, secondary kicker", () => {
     roundState = initializePokerRoundState();
     riverCards = [
-      new Card(Suit.Club, Rank.King),
-      new Card(Suit.Diamond, Rank.Queen),
-      new Card(Suit.Club, Rank.Ten),
-      new Card(Suit.Diamond, Rank.Eight),
-      new Card(Suit.Heart, Rank.Two),
+      cardObject(Suit.Club, Rank.King),
+      cardObject(Suit.Diamond, Rank.Queen),
+      cardObject(Suit.Club, Rank.Ten),
+      cardObject(Suit.Diamond, Rank.Eight),
+      cardObject(Suit.Heart, Rank.Two),
     ];
     handCardsA = [
-      new Card(Suit.Heart, Rank.King),
-      new Card(Suit.Heart, Rank.Jack),
+      cardObject(Suit.Heart, Rank.King),
+      cardObject(Suit.Heart, Rank.Jack),
     ];
     handCardsB = [
-      new Card(Suit.Spade, Rank.King),
-      new Card(Suit.Spade, Rank.Four),
+      cardObject(Suit.Spade, Rank.King),
+      cardObject(Suit.Spade, Rank.Four),
     ];
     identifyPokerWinner(roundState, riverCards, handCardsA, handCardsB);
     expect(roundState.winner).toBe(PokerWinner.HandA);
@@ -1559,19 +1561,19 @@ describe("identifyPokerWinner suite", () => {
   test("pair comparison, tertiary kicker", () => {
     roundState = initializePokerRoundState();
     riverCards = [
-      new Card(Suit.Club, Rank.King),
-      new Card(Suit.Diamond, Rank.Queen),
-      new Card(Suit.Club, Rank.Ten),
-      new Card(Suit.Diamond, Rank.Eight),
-      new Card(Suit.Heart, Rank.Two),
+      cardObject(Suit.Club, Rank.King),
+      cardObject(Suit.Diamond, Rank.Queen),
+      cardObject(Suit.Club, Rank.Ten),
+      cardObject(Suit.Diamond, Rank.Eight),
+      cardObject(Suit.Heart, Rank.Two),
     ];
     handCardsA = [
-      new Card(Suit.Heart, Rank.King),
-      new Card(Suit.Heart, Rank.Nine),
+      cardObject(Suit.Heart, Rank.King),
+      cardObject(Suit.Heart, Rank.Nine),
     ];
     handCardsB = [
-      new Card(Suit.Spade, Rank.King),
-      new Card(Suit.Spade, Rank.Seven),
+      cardObject(Suit.Spade, Rank.King),
+      cardObject(Suit.Spade, Rank.Seven),
     ];
     identifyPokerWinner(roundState, riverCards, handCardsA, handCardsB);
     expect(roundState.winner).toBe(PokerWinner.HandA);
@@ -1587,19 +1589,19 @@ describe("identifyPokerWinner suite", () => {
   test("pair comparison, tie", () => {
     roundState = initializePokerRoundState();
     riverCards = [
-      new Card(Suit.Club, Rank.King),
-      new Card(Suit.Diamond, Rank.Queen),
-      new Card(Suit.Club, Rank.Ten),
-      new Card(Suit.Diamond, Rank.Eight),
-      new Card(Suit.Heart, Rank.Two),
+      cardObject(Suit.Club, Rank.King),
+      cardObject(Suit.Diamond, Rank.Queen),
+      cardObject(Suit.Club, Rank.Ten),
+      cardObject(Suit.Diamond, Rank.Eight),
+      cardObject(Suit.Heart, Rank.Two),
     ];
     handCardsA = [
-      new Card(Suit.Heart, Rank.King),
-      new Card(Suit.Heart, Rank.Three),
+      cardObject(Suit.Heart, Rank.King),
+      cardObject(Suit.Heart, Rank.Three),
     ];
     handCardsB = [
-      new Card(Suit.Spade, Rank.King),
-      new Card(Suit.Spade, Rank.Four),
+      cardObject(Suit.Spade, Rank.King),
+      cardObject(Suit.Spade, Rank.Four),
     ];
     identifyPokerWinner(roundState, riverCards, handCardsA, handCardsB);
     expect(roundState.winner).toBe(PokerWinner.Tie);
@@ -1612,19 +1614,19 @@ describe("identifyPokerWinner suite", () => {
   test("high card, primary", () => {
     roundState = initializePokerRoundState();
     riverCards = [
-      new Card(Suit.Club, Rank.Ten),
-      new Card(Suit.Diamond, Rank.Eight),
-      new Card(Suit.Club, Rank.Six),
-      new Card(Suit.Diamond, Rank.Four),
-      new Card(Suit.Heart, Rank.Two),
+      cardObject(Suit.Club, Rank.Ten),
+      cardObject(Suit.Diamond, Rank.Eight),
+      cardObject(Suit.Club, Rank.Six),
+      cardObject(Suit.Diamond, Rank.Four),
+      cardObject(Suit.Heart, Rank.Two),
     ];
     handCardsA = [
-      new Card(Suit.Heart, Rank.King),
-      new Card(Suit.Heart, Rank.Three),
+      cardObject(Suit.Heart, Rank.King),
+      cardObject(Suit.Heart, Rank.Three),
     ];
     handCardsB = [
-      new Card(Suit.Spade, Rank.Queen),
-      new Card(Suit.Spade, Rank.Five),
+      cardObject(Suit.Spade, Rank.Queen),
+      cardObject(Suit.Spade, Rank.Five),
     ];
     identifyPokerWinner(roundState, riverCards, handCardsA, handCardsB);
     expect(roundState.winner).toBe(PokerWinner.HandA);
@@ -1637,19 +1639,19 @@ describe("identifyPokerWinner suite", () => {
   test("high card, secondary", () => {
     roundState = initializePokerRoundState();
     riverCards = [
-      new Card(Suit.Club, Rank.Ten),
-      new Card(Suit.Diamond, Rank.Eight),
-      new Card(Suit.Club, Rank.Six),
-      new Card(Suit.Diamond, Rank.Four),
-      new Card(Suit.Heart, Rank.Two),
+      cardObject(Suit.Club, Rank.Ten),
+      cardObject(Suit.Diamond, Rank.Eight),
+      cardObject(Suit.Club, Rank.Six),
+      cardObject(Suit.Diamond, Rank.Four),
+      cardObject(Suit.Heart, Rank.Two),
     ];
     handCardsA = [
-      new Card(Suit.Heart, Rank.Nine),
-      new Card(Suit.Heart, Rank.Three),
+      cardObject(Suit.Heart, Rank.Nine),
+      cardObject(Suit.Heart, Rank.Three),
     ];
     handCardsB = [
-      new Card(Suit.Spade, Rank.Seven),
-      new Card(Suit.Spade, Rank.Three),
+      cardObject(Suit.Spade, Rank.Seven),
+      cardObject(Suit.Spade, Rank.Three),
     ];
     identifyPokerWinner(roundState, riverCards, handCardsA, handCardsB);
     expect(roundState.winner).toBe(PokerWinner.HandA);
@@ -1662,19 +1664,19 @@ describe("identifyPokerWinner suite", () => {
   test("high card, tertiary", () => {
     roundState = initializePokerRoundState();
     riverCards = [
-      new Card(Suit.Club, Rank.Ten),
-      new Card(Suit.Diamond, Rank.Nine),
-      new Card(Suit.Club, Rank.Six),
-      new Card(Suit.Diamond, Rank.Four),
-      new Card(Suit.Heart, Rank.Two),
+      cardObject(Suit.Club, Rank.Ten),
+      cardObject(Suit.Diamond, Rank.Nine),
+      cardObject(Suit.Club, Rank.Six),
+      cardObject(Suit.Diamond, Rank.Four),
+      cardObject(Suit.Heart, Rank.Two),
     ];
     handCardsA = [
-      new Card(Suit.Heart, Rank.Eight),
-      new Card(Suit.Heart, Rank.Three),
+      cardObject(Suit.Heart, Rank.Eight),
+      cardObject(Suit.Heart, Rank.Three),
     ];
     handCardsB = [
-      new Card(Suit.Spade, Rank.Seven),
-      new Card(Suit.Spade, Rank.Five),
+      cardObject(Suit.Spade, Rank.Seven),
+      cardObject(Suit.Spade, Rank.Five),
     ];
     identifyPokerWinner(roundState, riverCards, handCardsA, handCardsB);
     expect(roundState.winner).toBe(PokerWinner.HandA);
@@ -1687,19 +1689,19 @@ describe("identifyPokerWinner suite", () => {
   test("high card, quaternery", () => {
     roundState = initializePokerRoundState();
     riverCards = [
-      new Card(Suit.Club, Rank.Ten),
-      new Card(Suit.Diamond, Rank.Nine),
-      new Card(Suit.Club, Rank.Eight),
-      new Card(Suit.Diamond, Rank.Four),
-      new Card(Suit.Heart, Rank.Two),
+      cardObject(Suit.Club, Rank.Ten),
+      cardObject(Suit.Diamond, Rank.Nine),
+      cardObject(Suit.Club, Rank.Eight),
+      cardObject(Suit.Diamond, Rank.Four),
+      cardObject(Suit.Heart, Rank.Two),
     ];
     handCardsA = [
-      new Card(Suit.Heart, Rank.Seven),
-      new Card(Suit.Heart, Rank.Three),
+      cardObject(Suit.Heart, Rank.Seven),
+      cardObject(Suit.Heart, Rank.Three),
     ];
     handCardsB = [
-      new Card(Suit.Spade, Rank.Six),
-      new Card(Suit.Spade, Rank.Five),
+      cardObject(Suit.Spade, Rank.Six),
+      cardObject(Suit.Spade, Rank.Five),
     ];
     identifyPokerWinner(roundState, riverCards, handCardsA, handCardsB);
     expect(roundState.winner).toBe(PokerWinner.HandA);
@@ -1712,19 +1714,19 @@ describe("identifyPokerWinner suite", () => {
   test("high card, quinary", () => {
     roundState = initializePokerRoundState();
     riverCards = [
-      new Card(Suit.Club, Rank.Ten),
-      new Card(Suit.Diamond, Rank.Nine),
-      new Card(Suit.Club, Rank.Eight),
-      new Card(Suit.Diamond, Rank.Seven),
-      new Card(Suit.Heart, Rank.Two),
+      cardObject(Suit.Club, Rank.Ten),
+      cardObject(Suit.Diamond, Rank.Nine),
+      cardObject(Suit.Club, Rank.Eight),
+      cardObject(Suit.Diamond, Rank.Seven),
+      cardObject(Suit.Heart, Rank.Two),
     ];
     handCardsA = [
-      new Card(Suit.Heart, Rank.Five),
-      new Card(Suit.Heart, Rank.Three),
+      cardObject(Suit.Heart, Rank.Five),
+      cardObject(Suit.Heart, Rank.Three),
     ];
     handCardsB = [
-      new Card(Suit.Spade, Rank.Four),
-      new Card(Suit.Spade, Rank.Three),
+      cardObject(Suit.Spade, Rank.Four),
+      cardObject(Suit.Spade, Rank.Three),
     ];
     identifyPokerWinner(roundState, riverCards, handCardsA, handCardsB);
     expect(roundState.winner).toBe(PokerWinner.HandA);

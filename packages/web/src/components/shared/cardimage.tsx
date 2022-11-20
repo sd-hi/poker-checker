@@ -6,19 +6,19 @@ import {
   Rank,
   RankDescription,
   describeCard,
-  Card,
+  ICard,
 } from "@poker-checker/common";
 
 const CardImage = ({
   card,
   onClick,
 }: {
-  card: Card;
+  card: ICard;
   onClick: React.MouseEventHandler<HTMLImageElement> | undefined;
 }) => {
   // Get card for this slot
 
-  if (card.getSuit() !== Suit.None && card.getRank() !== Rank.None) {
+  if (card.suit !== Suit.None && card.rank !== Rank.None) {
     return (
       <img
         className="card-image"
@@ -32,26 +32,26 @@ const CardImage = ({
     return <div></div>;
   }
 
-  function cardImageFilePath(card: Card): string {
+  function cardImageFilePath(card: ICard): string {
     // Get path to image for given card
     let filePath: string = "";
 
     filePath += `/images/cards/`;
-    filePath += SuitDescription.get(card.getSuit());
+    filePath += SuitDescription.get(card.suit);
     filePath += `s`;
     filePath += `_`;
 
-    switch (card.getRank()) {
+    switch (card.rank) {
       case Rank.Ace:
       case Rank.Jack:
       case Rank.Queen:
       case Rank.King:
         // Use word
-        filePath += RankDescription.get(card.getRank());
+        filePath += RankDescription.get(card.rank);
         break;
       default:
         // Use number
-        filePath += card.getRank();
+        filePath += card.rank;
     }
 
     filePath += `.svg`;

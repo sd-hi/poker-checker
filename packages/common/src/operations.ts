@@ -8,7 +8,7 @@ import {
   RankDescription,
   SuitDescription,
 } from "./const";
-import { Card } from "./classes";
+import { ICard } from "./classes";
 import { PokerHandState, PokerRoundState } from "./interfaces";
 
 export function rankValue(rank: Rank, aceHigh: boolean = false): number {
@@ -66,33 +66,33 @@ export function rankDifference(
 }
 
 export function removeDuplicateRankCards(
-  cards: Array<Card>,
+  cards: Array<ICard>,
   keepSuit: Suit = Suit.None
-): Array<Card> {
+): Array<ICard> {
   // Sort and prune array so it only contains one instance of each rank, rank descending
-  let uniqueCards: Array<Card> = [];
+  let uniqueCards: Array<ICard> = [];
 
   // Sort cards rank descending with preferred 'keep' suit of any duplicates towards start of array
   cards = cards.sort((cardA, cardB) => {
-    if (rankDifference(cardA.getRank(), cardB.getRank()) === 0) {
+    if (rankDifference(cardA.rank, cardB.rank) === 0) {
       // Keep any preferred suit at front when a duplicate is discovered
-      if (cardA.getSuit() === keepSuit) {
+      if (cardA.suit === keepSuit) {
         return -1;
       }
-      if (cardB.getSuit() === keepSuit) {
+      if (cardB.suit === keepSuit) {
         return 1;
       }
       return 0;
     }
 
     // Sort rank descending otherwise
-    return -1 * rankDifference(cardA.getRank(), cardB.getRank(), true);
+    return -1 * rankDifference(cardA.rank, cardB.rank, true);
   });
 
   // Remove duplicates
-  let lastCard: Card | null = null;
+  let lastCard: ICard | null = null;
   cards.forEach((card) => {
-    if (lastCard === null || card.getRank() !== lastCard.getRank()) {
+    if (lastCard === null || card.rank !== lastCard.rank) {
       // Add to unique cards array
       uniqueCards.push(card);
       lastCard = card;
@@ -103,7 +103,7 @@ export function removeDuplicateRankCards(
 }
 
 export function getHighestRank(
-  cards: Array<Card>,
+  cards: Array<ICard>,
   excludeRanks: Array<Rank> = [],
   forceAceHigh: boolean = true
 ): Rank {
@@ -112,15 +112,15 @@ export function getHighestRank(
 
   highestRank = Rank.None;
 
-  cards.forEach((card: Card) => {
-    if (excludeRanks.includes(card.getRank())) {
+  cards.forEach((card: ICard) => {
+    if (excludeRanks.includes(card.rank)) {
       // This rank is to be excluded from result
       return;
     }
 
-    if (rankDifference(card.getRank(), highestRank, forceAceHigh) > 0) {
+    if (rankDifference(card.rank, highestRank, forceAceHigh) > 0) {
       // This is the highest rank found so far
-      highestRank = card.getRank();
+      highestRank = card.rank;
     }
   });
 
@@ -128,15 +128,15 @@ export function getHighestRank(
 }
 
 export function getMostFrequentRank(
-  cards: Array<Card>,
+  cards: Array<ICard>,
   excludeRanks: Array<Rank> = []
 ): Rank {
   let rankCounts: { [rank: string]: number } = {};
   let mostFrequentRank: Rank = Rank.None;
 
   // Get counts for each rank and store in object
-  cards.forEach((card: Card) => {
-    const rankAsString = card.getRank().valueOf().toString();
+  cards.forEach((card: ICard) => {
+    const rankAsString = card.rank.valueOf().toString();
     if (rankCounts[rankAsString]) {
       rankCounts[rankAsString] += 1;
     } else {
@@ -156,14 +156,14 @@ export function getMostFrequentRank(
   return mostFrequentRank;
 }
 
-export function getMostFrequentSuit(cards: Array<Card>): Suit {
+export function getMostFrequentSuit(cards: Array<ICard>): Suit {
   // Get the most common suit in a selection of cards
   let suitCounts: { [suit: string]: number } = {};
   let mostFrequentSuit: Suit = Suit.None;
 
   // Get counts for each suit and store in object
-  cards.forEach((card: Card) => {
-    const suitAsString = card.getSuit().valueOf().toString();
+  cards.forEach((card: ICard) => {
+    const suitAsString = card.suit.valueOf().toString();
     if (suitCounts[suitAsString]) {
       suitCounts[suitAsString] += 1;
     } else {
@@ -185,11 +185,11 @@ export function getMostFrequentSuit(cards: Array<Card>): Suit {
 
 export function detectPokerHandResult(
   state: PokerHandState,
-  cards: Array<Card>
+  cards: Array<ICard>
 ): void {
   // Determine poker hand result
   let finalResult: PokerHandResult;
-  let finalResultCards: Array<Card>;
+  let finalResultCards: Array<ICard>;
 
   // Four of a Kind, Full House, Three of a Kind, Two Pair, Pair
   detectPokerHandResult_Detect_Duplicates(state, cards);
@@ -234,8 +234,8 @@ export function detectPokerHandResult(
         // Ensure 5 highest cards are chosen
         finalResultCards = [...cards];
         finalResultCards.sort(
-          (cardA: Card, cardB: Card) =>
-            -1 * rankDifference(cardA.getRank(), cardB.getRank(), true)
+          (cardA: ICard, cardB: ICard) =>
+            -1 * rankDifference(cardA.rank, cardB.rank, true)
         );
         if (finalResultCards.length > 5) {
           finalResultCards = finalResultCards.slice(0, 5);
@@ -257,22 +257,22 @@ export function detectPokerHandResult(
 
 export function detectPokerHandResult_Detect_Duplicates(
   state: PokerHandState,
-  cards: Array<Card>
+  cards: Array<ICard>
 ): void {
   // Detect poker result based on duplicate ranks found
   let rankCounts: { [rank: string]: number }; // Count for each rank in card set
 
-  let duplicateCards: Array<Card>;
+  let duplicateCards: Array<ICard>;
   let duplicateResult: PokerHandResult;
-  let kickerCards: Array<Card>;
+  let kickerCards: Array<ICard>;
 
-  let pairCards: Array<Card>;
+  let pairCards: Array<ICard>;
   let pairCount: number; // Number of pairs found
 
-  let tripleCards: Array<Card>;
+  let tripleCards: Array<ICard>;
   let tripleCount: number; // Number of triples found
 
-  let quadCards: Array<Card>;
+  let quadCards: Array<ICard>;
   let quadCount: number; // Number of quadruples found
 
   rankCounts = {};
@@ -289,8 +289,8 @@ export function detectPokerHandResult_Detect_Duplicates(
   duplicateResult = PokerHandResult.None;
 
   // Count how many of each rank is present in card set
-  cards.forEach((card: Card) => {
-    const rankAsString = card.getRank().valueOf().toString();
+  cards.forEach((card: ICard) => {
+    const rankAsString = card.rank.valueOf().toString();
     if (rankCounts[rankAsString]) {
       rankCounts[rankAsString] += 1;
     } else {
@@ -314,8 +314,8 @@ export function detectPokerHandResult_Detect_Duplicates(
   }
 
   // Identify cards which make up pairs, triples and quads
-  cards.forEach((card: Card) => {
-    const rankAsString = card.getRank().valueOf().toString();
+  cards.forEach((card: ICard) => {
+    const rankAsString = card.rank.valueOf().toString();
     switch (rankCounts[rankAsString]) {
       case 4:
         quadCards.push(card);
@@ -339,16 +339,16 @@ export function detectPokerHandResult_Detect_Duplicates(
     if (tripleCount > 0) {
       // Prune any lower triples
       let keepRank = getHighestRank(tripleCards);
-      tripleCards = tripleCards.filter((card: Card) => {
-        return card.getRank() === keepRank;
+      tripleCards = tripleCards.filter((card: ICard) => {
+        return card.rank === keepRank;
       });
       duplicateResult = PokerHandResult.ThreeOfAKind;
 
       if (pairCount > 0) {
         // If result is a full house, we only want to keep highest pair
-        keepRank = getHighestRank(pairCards, [tripleCards[0].getRank()]);
-        pairCards = pairCards.filter((card: Card) => {
-          return card.getRank() === keepRank;
+        keepRank = getHighestRank(pairCards, [tripleCards[0].rank]);
+        pairCards = pairCards.filter((card: ICard) => {
+          return card.rank === keepRank;
         });
         duplicateResult = PokerHandResult.FullHouse;
       }
@@ -358,14 +358,14 @@ export function detectPokerHandResult_Detect_Duplicates(
         let keepRank1 = getHighestRank(pairCards);
         let keepRank2 = getHighestRank(pairCards, [keepRank1]);
 
-        pairCards = pairCards.filter((card: Card) => {
-          return card.getRank() === keepRank1 || card.getRank() === keepRank2;
+        pairCards = pairCards.filter((card: ICard) => {
+          return card.rank === keepRank1 || card.rank === keepRank2;
         });
 
         // Sort remaining pairs descending
         pairCards = pairCards.sort(
-          (cardA: Card, cardB: Card) =>
-            -1 * rankDifference(cardA.getRank(), cardB.getRank(), true)
+          (cardA: ICard, cardB: ICard) =>
+            -1 * rankDifference(cardA.rank, cardB.rank, true)
         );
 
         duplicateResult = PokerHandResult.TwoPair;
@@ -379,9 +379,9 @@ export function detectPokerHandResult_Detect_Duplicates(
   duplicateCards = [...quadCards, ...tripleCards, ...pairCards];
 
   // Build array of best kickers for use in comparison later, rank descending
-  kickerCards = cards.filter((card: Card) => !duplicateCards.includes(card));
-  kickerCards = kickerCards.sort((cardA: Card, cardB: Card) =>
-    rankDifference(cardB.getRank(), cardA.getRank(), true)
+  kickerCards = cards.filter((card: ICard) => !duplicateCards.includes(card));
+  kickerCards = kickerCards.sort((cardA: ICard, cardB: ICard) =>
+    rankDifference(cardB.rank, cardA.rank, true)
   );
   kickerCards = kickerCards.slice(0, 5 - duplicateCards.length);
 
@@ -393,11 +393,11 @@ export function detectPokerHandResult_Detect_Duplicates(
 
 export function detectPokerHandResult_Detect_Flush(
   state: PokerHandState,
-  cards: Array<Card>
+  cards: Array<ICard>
 ): void {
   // Detect any flush for the cards
   let mostFrequentSuit: Suit;
-  let flushCards: Array<Card>;
+  let flushCards: Array<ICard>;
 
   mostFrequentSuit = Suit.None;
   flushCards = [];
@@ -412,7 +412,7 @@ export function detectPokerHandResult_Detect_Flush(
   // Keep only the most commonly occurring suit
   mostFrequentSuit = getMostFrequentSuit(cards);
   flushCards = cards.filter(
-    (card: Card) => card.getSuit() === mostFrequentSuit
+    (card: ICard) => card.suit === mostFrequentSuit
   );
 
   if (flushCards.length < 5) {
@@ -423,8 +423,8 @@ export function detectPokerHandResult_Detect_Flush(
   }
 
   // Sort the cards in descending rank order (treating ace as high)
-  flushCards.sort((cardA: Card, cardB: Card) => {
-    return -1 * rankDifference(cardA.getRank(), cardB.getRank(), true);
+  flushCards.sort((cardA: ICard, cardB: ICard) => {
+    return -1 * rankDifference(cardA.rank, cardB.rank, true);
   });
 
   // Trim the set of cards down to the highest 5
@@ -436,11 +436,11 @@ export function detectPokerHandResult_Detect_Flush(
 
 export function detectPokerHandResult_Detect_Straight(
   state: PokerHandState,
-  cards: Array<Card>
+  cards: Array<ICard>
 ): void {
   // Detect a straight for given set of cards
   let straightResult: PokerHandResult;
-  let straightCards: Array<Card>;
+  let straightCards: Array<ICard>;
   let isFlush: Boolean;
   let keepSuit: Suit;
 
@@ -460,7 +460,7 @@ export function detectPokerHandResult_Detect_Straight(
   straightCards = removeDuplicateRankCards(straightCards, keepSuit);
 
   // Duplicate an ace at the end to detect low straights
-  if (straightCards[0].getRank() === Rank.Ace) {
+  if (straightCards[0].rank === Rank.Ace) {
     straightCards.push(straightCards[0]);
   }
 
@@ -471,8 +471,8 @@ export function detectPokerHandResult_Detect_Straight(
     if (
       Math.abs(
         rankDifference(
-          straightCards[i - 1].getRank(),
-          straightCards[i].getRank()
+          straightCards[i - 1].rank,
+          straightCards[i].rank
         )
       ) > 1
     ) {
@@ -502,15 +502,15 @@ export function detectPokerHandResult_Detect_Straight(
 
     // Determine whether straight is a flush (all the same suit)
     isFlush = true;
-    straightCards.forEach((card: Card) => {
-      if (card.getSuit() !== keepSuit) {
+    straightCards.forEach((card: ICard) => {
+      if (card.suit !== keepSuit) {
         isFlush = false;
       }
     });
 
     if (isFlush) {
       // Straight flush - the entire straight is the same suit
-      if (straightCards[straightCards.length - 1].getRank() === Rank.Ten) {
+      if (straightCards[straightCards.length - 1].rank === Rank.Ten) {
         straightResult = PokerHandResult.RoyalFlush;
       } else {
         straightResult = PokerHandResult.StraightFlush;
@@ -534,9 +534,9 @@ export function detectPokerHandResult_DetermineResultValue(
 ) {
   // Calculate variables pertaining to a hand's value - to be used in tie-breaker calculations
   let result: PokerHandResult = state.finalResult;
-  let resultCards: Array<Card> = state.finalResultCards;
+  let resultCards: Array<ICard> = state.finalResultCards;
   let resultRanks: Array<Rank> = [];
-  let resultTieBreakCards: Array<Card> = [];
+  let resultTieBreakCards: Array<ICard> = [];
 
   switch (result) {
     case PokerHandResult.FourOfAKind:
@@ -562,7 +562,7 @@ export function detectPokerHandResult_DetermineResultValue(
         result === PokerHandResult.Straight ||
         PokerHandResult.StraightFlush
       ) {
-        if (resultCards.some((card: Card) => card.getRank() === Rank.Four)) {
+        if (resultCards.some((card: ICard) => card.rank === Rank.Four)) {
           isLowStraight = true;
         }
       }
@@ -571,7 +571,7 @@ export function detectPokerHandResult_DetermineResultValue(
     case PokerHandResult.Flush:
     case PokerHandResult.HighCard:
       // Multiple highest cards determine the result
-      resultRanks = resultCards.map((card: Card) => card.getRank());
+      resultRanks = resultCards.map((card: ICard) => card.rank);
       break;
   }
 
@@ -581,7 +581,7 @@ export function detectPokerHandResult_DetermineResultValue(
 }
 
 export function detectPokerHandResult_DetermineResultValue_Duplicates(
-  cards: Array<Card>,
+  cards: Array<ICard>,
   result: PokerHandResult
 ): Array<Rank> {
   // Get the ranks of the duplicates for tie-breaker comparison, descending strength order
@@ -616,17 +616,17 @@ export function detectPokerHandResult_DetermineResultValue_Duplicates(
 
 export function identifyPokerWinner(
   roundState: PokerRoundState,
-  riverCards: Array<Card>,
-  handCardsA: Array<Card>,
-  handCardsB: Array<Card>
+  riverCards: Array<ICard>,
+  handCardsA: Array<ICard>,
+  handCardsB: Array<ICard>
 ): void {
   let handStateA: PokerHandState = roundState.handStateA;
   let handStateB: PokerHandState = roundState.handStateB;
 
   let winner: PokerWinner = PokerWinner.Tie;
 
-  let cardsA: Array<Card>;
-  let cardsB: Array<Card>;
+  let cardsA: Array<ICard>;
+  let cardsB: Array<ICard>;
 
   // Combine river with player cards to form two sets for combination analysis
   cardsA = riverCards.concat(handCardsA);
@@ -674,8 +674,8 @@ export function identifyPokerWinner(
         i++
       ) {
         let difference = rankDifference(
-          handStateA.finalResultTieBreakCards[i].getRank(),
-          handStateB.finalResultTieBreakCards[i].getRank(),
+          handStateA.finalResultTieBreakCards[i].rank,
+          handStateB.finalResultTieBreakCards[i].rank,
           true
         );
         if (difference > 0) {

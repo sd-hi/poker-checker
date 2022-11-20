@@ -1,4 +1,4 @@
-import { Card } from "./classes";
+import { ICard } from "./classes";
 import {
   Language,
   PokerHandResult,
@@ -10,7 +10,7 @@ import {
 } from "./const";
 import { PokerHandState, PokerRoundState } from "./interfaces";
 
-export function describeCard(language: Language, card: Card | null): string {
+export function describeCard(language: Language, card: ICard | null): string {
   // Describe given card as human friendly description
   let description: string = "";
 
@@ -18,9 +18,9 @@ export function describeCard(language: Language, card: Card | null): string {
     return "NULL CARD";
   }
 
-  description += RankDescription.get(card.getRank());
+  description += RankDescription.get(card.rank);
   description += " of ";
-  description += SuitDescription.get(card.getSuit());
+  description += SuitDescription.get(card.suit);
   description += "s";
 
   return description;
@@ -58,7 +58,7 @@ export function describePokerHandState(
     case PokerHandResult.Flush:
     case PokerHandResult.StraightFlush:
       description +=
-        " of " + SuitDescription.get(state.finalResultCards[0].getSuit()) + "s";
+        " of " + SuitDescription.get(state.finalResultCards[0].suit) + "s";
     case PokerHandResult.Straight:
       // Results best described by their highest card
       description +=
@@ -86,7 +86,7 @@ export function describePokerHandState(
     case PokerHandResult.RoyalFlush:
       // Results described by their suit
       description +=
-        " of " + SuitDescription.get(state.finalResultCards[0].getSuit()) + "s";
+        " of " + SuitDescription.get(state.finalResultCards[0].suit) + "s";
   }
 
   return description;

@@ -1,15 +1,14 @@
 import {
-  Card,
-  describeCard,
-  Language,
+  ICard,
   Rank,
   Suit,
+  cardObject,
 } from "@poker-checker/common";
 import { HandId } from "./constants";
 
 export interface ICardSlotData {
   id: number;
-  card: Card;
+  card: ICard;
 }
 
 export interface IHandData {
@@ -28,27 +27,27 @@ export const initialRoundData: IRoundData = {
       id: HandId.River,
       name: "River",
       slots: [
-        { id: 1, card: new Card(Suit.None, Rank.None) },
-        { id: 2, card: new Card(Suit.None, Rank.None) },
-        { id: 3, card: new Card(Suit.None, Rank.None) },
-        { id: 4, card: new Card(Suit.None, Rank.None) },
-        { id: 5, card: new Card(Suit.None, Rank.None) },
+        { id: 1, card: { suit: Suit.None, rank: Rank.None } },
+        { id: 2, card: { suit: Suit.None, rank: Rank.None } },
+        { id: 3, card: { suit: Suit.None, rank: Rank.None } },
+        { id: 4, card: { suit: Suit.None, rank: Rank.None } },
+        { id: 5, card: { suit: Suit.None, rank: Rank.None } },
       ],
     },
     {
       id: HandId.PlayerA,
       name: "Player A",
       slots: [
-        { id: 1, card: new Card(Suit.None, Rank.None) },
-        { id: 2, card: new Card(Suit.None, Rank.None) },
+        { id: 1, card: { suit: Suit.None, rank: Rank.None } },
+        { id: 2, card: { suit: Suit.None, rank: Rank.None } },
       ],
     },
     {
       id: HandId.PlayerB,
       name: "Player B",
       slots: [
-        { id: 1, card: new Card(Suit.None, Rank.None) },
-        { id: 2, card: new Card(Suit.None, Rank.None) },
+        { id: 1, card: { suit: Suit.None, rank: Rank.None } },
+        { id: 2, card: { suit: Suit.None, rank: Rank.None } },
       ],
     },
   ],
@@ -85,9 +84,9 @@ export const roundDataCopy = (roundData: IRoundData): IRoundData => {
 export const roundDataGetCard = (
   roundData: IRoundData,
   slotKey: ISlotKey
-): Card => {
+): ICard => {
   // Get card located in given identifier key
-  let card: Card;
+  let card: ICard;
   let slot: ICardSlotData | undefined;
 
   slot = roundDataGetSlot(roundData, slotKey);
@@ -95,7 +94,7 @@ export const roundDataGetCard = (
   if (slot !== undefined) {
     card = slot.card;
   } else {
-    card = new Card(Suit.None, Rank.None);
+    card = { suit: Suit.None, rank: Rank.None };
   }
 
   return card;
@@ -104,7 +103,7 @@ export const roundDataGetCard = (
 export const roundDataSetCard = (
   roundData: IRoundData,
   slotKey: ISlotKey,
-  card: Card
+  card: ICard
 ): void => {
   // Apply given card to given slot
   let slot: ICardSlotData | undefined = undefined;
@@ -165,7 +164,7 @@ export const roundDataSetHandName = (
 
 const roundDataExecuteForAllCards = (
   roundData: IRoundData,
-  callbackFn: (card: Card) => Card
+  callbackFn: (card: ICard) => ICard
 ) => {
   // Execute given callback for every card, returning updated card
   roundData.hands.forEach((hand: IHandData) => {
@@ -177,19 +176,19 @@ const roundDataExecuteForAllCards = (
 
 export const roundDataClearCards = (roundData: IRoundData) => {
   // Clear cards from every slot
-  roundDataExecuteForAllCards(roundData, (card: Card) => {
-    return new Card(Suit.None, Rank.None);
+  roundDataExecuteForAllCards(roundData, (card: ICard) => {
+    return { suit: Suit.None, rank: Rank.None };
   });
 };
 
 export const roundDataRandomizeCards = (roundData: IRoundData) => {
   // Randomly choose a card for each slot
-  roundDataExecuteForAllCards(roundData, (card: Card) => {
+  roundDataExecuteForAllCards(roundData, (card: ICard) => {
     const suitIndex =
       Math.floor(Math.random() * (Object.keys(Suit).length - 1)) + 1;
     const rankIndex =
       Math.floor(Math.random() * (Object.keys(Rank).length - 1)) + 1;
-    return new Card(
+    return cardObject(
       Object.values(Suit)[suitIndex],
       Object.values(Rank)[rankIndex]
     );

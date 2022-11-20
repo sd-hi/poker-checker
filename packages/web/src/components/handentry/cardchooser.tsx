@@ -14,7 +14,7 @@ import {
   BsFillSuitHeartFill,
   BsFillSuitSpadeFill,
 } from "react-icons/bs";
-import { Card, Rank, Suit } from "@poker-checker/common";
+import { cardObject, Rank, Suit } from "@poker-checker/common";
 import { IRoundData } from "../shared/rounddata";
 
 export interface ICardChooserProps {
@@ -37,19 +37,27 @@ const CardChooser: React.FC<ICardChooserProps> = ({
 
   useEffect(() => {
     // Pre-load chooser with card in selected slot
-    setSelectedSuit(roundDataGetCard(roundData, slotKey).getSuit());
-    setSelectedRank(roundDataGetCard(roundData, slotKey).getRank());
+    setSelectedSuit(roundDataGetCard(roundData, slotKey).suit);
+    setSelectedRank(roundDataGetCard(roundData, slotKey).rank);
   }, [roundData, slotKey, isVisible]);
 
   const handleCardChosen = () => {
     // Confirm single card and close chooser
-    roundDataSetCard(roundData, slotKey, new Card(selectedSuit, selectedRank));
+    roundDataSetCard(
+      roundData,
+      slotKey,
+      cardObject(selectedSuit, selectedRank)
+    );
     closeChooser();
   };
 
   const handleCardChosenNext = () => {
     // Confirm card and switch chooser to subsequent slot
-    roundDataSetCard(roundData, slotKey, new Card(selectedSuit, selectedRank));
+    roundDataSetCard(
+      roundData,
+      slotKey,
+      cardObject(selectedSuit, selectedRank)
+    );
 
     let nextSlotId: number = slotKey.slotId + 1;
     let hand: IHandData | undefined = roundData.hands.find(
@@ -117,7 +125,7 @@ const CardChooser: React.FC<ICardChooserProps> = ({
           <div className="card-chooser">
             <div className="card-chooser-image-container">
               <CardImage
-                card={new Card(selectedSuit, selectedRank)}
+                card={cardObject(selectedSuit, selectedRank)}
                 onClick={undefined}
               />
             </div>

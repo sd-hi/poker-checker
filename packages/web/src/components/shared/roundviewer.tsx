@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Button, Modal } from "react-bootstrap";
 import { RoundResult, RoundResultPayloadCard } from "@poker-checker/server";
 import { getRoundResult } from "../../api/roundresult";
-import { Card } from "@poker-checker/common";
+import { cardObject, ICard } from "@poker-checker/common";
 import CardImage from "./cardimage";
 
 export interface IRoundViewerProps {
@@ -73,8 +73,7 @@ const RoundViewer: React.FC<IRoundViewerProps> = ({
         <div className="round-viewer-heading">
           <h2>Results</h2>
         </div>
-        <div className="round-viewer-results-container">
-        </div>
+        <div className="round-viewer-results-container"></div>
         <div className="round-viewer-heading">
           <h2>Inputs</h2>
         </div>
@@ -143,14 +142,14 @@ const RoundViewerCardSet = ({
   }
 
   let cards = payloadCards.map((payloadCard) => {
-    return new Card(payloadCard.suit, payloadCard.rank);
+    return cardObject(payloadCard.suit, payloadCard.rank);
   });
 
   return (
     <div className="round-viewer-card-set-container">
       {title}
       <div className="round-viewer-image-container">
-        {cards.map((card: Card) => {
+        {cards.map((card: ICard) => {
           return <CardImage onClick={() => {}} card={card} />;
         })}
       </div>

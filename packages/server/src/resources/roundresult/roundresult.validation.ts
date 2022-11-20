@@ -2,12 +2,20 @@ import Joi from "joi";
 import { join } from "path";
 import { Suit, Rank } from "@poker-checker/common";
 
-const validSuitValues: Array<String> = Object.values(Suit).filter((suit) => suit != Suit.None);
-const validRankValues: Array<String> = Object.values(Rank).filter((rank) => rank != Rank.None);
+const validSuitValues: Array<String> = Object.values(Suit).filter(
+  (suit) => suit != Suit.None
+);
+const validRankValues: Array<String> = Object.values(Rank).filter(
+  (rank) => rank != Rank.None
+);
 
 const joiCardSchema = Joi.object().keys({
-  suit: Joi.string().required().valid(...validSuitValues),
-  rank: Joi.string().required().valid(...validRankValues),
+  suit: Joi.string()
+    .required()
+    .valid(...validSuitValues),
+  rank: Joi.string()
+    .required()
+    .valid(...validRankValues),
 });
 
 const joiRiverSchema = Joi.object().keys({

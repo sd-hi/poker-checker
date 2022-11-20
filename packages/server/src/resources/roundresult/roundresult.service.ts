@@ -6,11 +6,12 @@ import RoundResult, {
   RoundResultEntry,
 } from "../../resources/roundresult/roundresult.interface";
 import {
+  cardObject,
   identifyPokerWinner,
   initializePokerRoundState,
   PokerRoundState,
 } from "@poker-checker/common";
-import { Card } from "@poker-checker/common";
+import { ICard } from "@poker-checker/common";
 import { read } from "fs";
 
 class RoundResultService {
@@ -23,23 +24,23 @@ class RoundResultService {
     requestBody: RoundResultPostRequestPayload
   ): Promise<RoundResultPostResponsePayload> {
     let roundState: PokerRoundState;
-    let riverCards: Array<Card>;
-    let handCardsA: Array<Card>;
-    let handCardsB: Array<Card>;
+    let riverCards: Array<ICard>;
+    let handCardsA: Array<ICard>;
+    let handCardsB: Array<ICard>;
     let roundResultEntry: RoundResultEntry = {} as RoundResultEntry;
     let responsePayload: RoundResultPostResponsePayload =
       {} as RoundResultPostResponsePayload;
 
     // Extract relevant data from request
     roundState = initializePokerRoundState();
-    riverCards = requestBody.river.cards.map(
-      (card) => new Card(card.suit, card.rank)
+    riverCards = requestBody.river.cards.map((card) =>
+      cardObject(card.suit, card.rank)
     );
-    handCardsA = requestBody.playerA.cards.map(
-      (card) => new Card(card.suit, card.rank)
+    handCardsA = requestBody.playerA.cards.map((card) =>
+      cardObject(card.suit, card.rank)
     );
-    handCardsB = requestBody.playerB.cards.map(
-      (card) => new Card(card.suit, card.rank)
+    handCardsB = requestBody.playerB.cards.map((card) =>
+      cardObject(card.suit, card.rank)
     );
 
     // Calculate the outcome of the round
@@ -57,7 +58,6 @@ class RoundResultService {
       responsePayload.id = roundresult._id;
 
       return responsePayload;
-
     } catch {
       throw new Error("Unable to create roundresult");
     }
