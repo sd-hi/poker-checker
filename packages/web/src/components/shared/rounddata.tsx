@@ -1,9 +1,4 @@
-import {
-  ICard,
-  Rank,
-  Suit,
-  cardObject,
-} from "@poker-checker/common";
+import { ICard, Rank, Suit, cardObject, CardShoe } from "@poker-checker/common";
 import { HandId } from "./constants";
 
 export interface ICardSlotData {
@@ -183,14 +178,17 @@ export const roundDataClearCards = (roundData: IRoundData) => {
 
 export const roundDataRandomizeCards = (roundData: IRoundData) => {
   // Randomly choose a card for each slot
+  const shoe: CardShoe = new CardShoe(); // Shoe to deal cards from
+
   roundDataExecuteForAllCards(roundData, (card: ICard) => {
-    const suitIndex =
-      Math.floor(Math.random() * (Object.keys(Suit).length - 1)) + 1;
-    const rankIndex =
-      Math.floor(Math.random() * (Object.keys(Rank).length - 1)) + 1;
-    return cardObject(
-      Object.values(Suit)[suitIndex],
-      Object.values(Rank)[rankIndex]
-    );
+    // Deal the next card from the shoe, to assign to this slot
+    const randomCard = shoe.dealCard();
+
+    if (randomCard === null) {
+      // Some issue occurred with the shoe, don't modify
+      return card;
+    }
+
+    return randomCard;
   });
 };

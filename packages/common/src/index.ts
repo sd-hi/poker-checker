@@ -1,5 +1,6 @@
 export * from "./classes"
 export * from "./const"
+export * from "./dealing"
 export * from "./interfaces"
 export * from "./language"
 export * from "./operations"
