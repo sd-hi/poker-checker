@@ -168,14 +168,14 @@
 
 .round-viewer-image-container .card-image {
   max-width: 20%;
+  padding: 5px;
 }
 
 .round-viewer-inputs-container {
   align-items: center;
   display: grid;
   gap: 5px;
-  grid-template-columns: repeat(3, 1fr);
-  grid-template-rows: repeat(1, 1fr);
+  grid-template-rows: repeat(3, 1fr);
   text-align: center;
 }
 
@@ -185,14 +185,14 @@
 
 .round-viewer-results-container {
   align-items: center;
-  display: flex;
+  display: grid;
   gap: 5px;
-  grid-template-columns: repeat(2, 1fr);
-  grid-template-rows: repeat(1, 1fr);
+  grid-template-rows: repeat(2, 1fr);
   text-align: center;
 }
 
 .round-viewer-heading {
+  background-color: palegoldenrod;
   text-align: center;
 }
 

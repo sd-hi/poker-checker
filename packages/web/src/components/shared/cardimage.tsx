@@ -9,13 +9,12 @@ import {
   ICard,
 } from "@poker-checker/common";
 
-const CardImage = ({
-  card,
-  onClick,
-}: {
+type CardImageProps = {
   card: ICard;
-  onClick: React.MouseEventHandler<HTMLImageElement> | undefined;
-}) => {
+  onClick?: React.MouseEventHandler<HTMLImageElement> | undefined;
+};
+
+const CardImage = ({ card, onClick }: CardImageProps) => {
   // Get card for this slot
 
   if (card.suit !== Suit.None && card.rank !== Rank.None) {

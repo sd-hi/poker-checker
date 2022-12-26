@@ -2,7 +2,13 @@ import React, { useEffect, useState } from "react";
 import { Button, Modal } from "react-bootstrap";
 import { RoundResult, RoundResultPayloadCard } from "@poker-checker/server";
 import { getRoundResult } from "../../api/roundresult";
-import { cardObject, ICard } from "@poker-checker/common";
+import {
+  cardObject,
+  describePokerHandState,
+  ICard,
+  Language,
+  PokerWinner,
+} from "@poker-checker/common";
 import CardImage from "./cardimage";
 
 export interface IRoundViewerProps {
@@ -14,6 +20,17 @@ export interface IRoundViewerProps {
 enum RoundViewerStatus {
   Loading, // A result is currently being loaded
   Done, // Necessary data has been received
+}
+
+enum Player {
+  PlayerA,
+  PlayerB,
+}
+
+enum PlayerWinStatus {
+  Win,
+  Loss,
+  Draw,
 }
 
 const RoundViewer: React.FC<IRoundViewerProps> = ({
@@ -34,6 +51,17 @@ const RoundViewer: React.FC<IRoundViewerProps> = ({
       await fetchRoundResult();
     })();
   }, [roundResultId, isVisible]);
+
+  const describeRoundResultWinner = (roundResult: RoundResult) => {
+    // Text to describe winner of round result
+    if (roundResult.outcome.winner === PokerWinner.HandA) {
+      return `${roundResult.input.playerA.name} won!`;
+    } else if ((roundResult.outcome.winner === PokerWinner.HandB)) {
+      return `${roundResult.input.playerB.name} won!`;
+    } else {
+      return "Round was a draw";
+    }
+  };
 
   const fetchRoundResult = async () => {
     setStatus(RoundViewerStatus.Loading);
@@ -62,18 +90,80 @@ const RoundViewer: React.FC<IRoundViewerProps> = ({
     }
   };
 
+  const calculatePlayerWinStatus = (
+    roundResult: RoundResult,
+    player: Player
+  ): PlayerWinStatus => {
+    // Determine win staus of given player
+    switch (roundResult.outcome.winner) {
+      case PokerWinner.HandA:
+        return player === Player.PlayerA
+          ? PlayerWinStatus.Win
+          : PlayerWinStatus.Loss;
+      case PokerWinner.HandB:
+        return player === Player.PlayerB
+          ? PlayerWinStatus.Win
+          : PlayerWinStatus.Loss;
+      default:
+        return PlayerWinStatus.Draw;
+    }
+  };
+
+  const resultsStyle = (roundResult: RoundResult, player: Player): React.CSSProperties => {
+    // Return styling of given player's result container
+    let winStatus = calculatePlayerWinStatus(roundResult, player);
+
+    console.log(Player[player])
+    console.log(PlayerWinStatus[winStatus])
+    
+    switch (winStatus) {
+      case PlayerWinStatus.Win:
+        return {backgroundColor: "lightgreen"};
+      case PlayerWinStatus.Loss:
+        return {backgroundColor: "lightpink"};
+      default:
+        return {backgroundColor: "lightgray"};
+    }
+  };
+
   let modalBody;
 
   if (roundResult) {
+
     modalBody = (
       <div>
         <div className="round-viewer-heading">
-          <h1>Player {roundResult.outcome.winner} wins!</h1>
+          <h1>{describeRoundResultWinner(roundResult)}</h1>
         </div>
         <div className="round-viewer-heading">
           <h2>Results</h2>
         </div>
-        <div className="round-viewer-results-container"></div>
+        <div className="round-viewer-results-container">
+          <div className="round-viewer-card-set-container" style={resultsStyle(roundResult, Player.PlayerA)}>
+            <RoundViewerCardSet
+              payloadCards={roundResult.outcome.handStateA.finalResultCards.concat(
+                roundResult.outcome.handStateA.finalResultTieBreakCards
+              )}
+              title={roundResult.input.playerA.name}
+              caption={describePokerHandState(
+                Language.English,
+                roundResult.outcome.handStateA
+              )}
+            ></RoundViewerCardSet>
+          </div>
+          <div className="round-viewer-card-set-container" style={resultsStyle(roundResult, Player.PlayerB)}>
+            <RoundViewerCardSet
+              payloadCards={roundResult.outcome.handStateB.finalResultCards.concat(
+                roundResult.outcome.handStateB.finalResultTieBreakCards
+              )}
+              title={roundResult.input.playerB.name}
+              caption={describePokerHandState(
+                Language.English,
+                roundResult.outcome.handStateB
+              )}
+            ></RoundViewerCardSet>
+          </div>
+        </div>
         <div className="round-viewer-heading">
           <h2>Inputs</h2>
         </div>
@@ -100,7 +190,7 @@ const RoundViewer: React.FC<IRoundViewerProps> = ({
       </div>
     );
   } else {
-    modalBody = <></>;
+    modalBody = <h1>No data</h1>;
   }
 
   return (
@@ -131,11 +221,13 @@ const RoundViewer: React.FC<IRoundViewerProps> = ({
 interface IRoundViewerCardSetProps {
   payloadCards: Array<RoundResultPayloadCard>;
   title: string;
+  caption?: string;
 }
 
 const RoundViewerCardSet = ({
   payloadCards,
   title,
+  caption,
 }: IRoundViewerCardSetProps) => {
   if (!payloadCards) {
     return <></>;
@@ -147,12 +239,13 @@ const RoundViewerCardSet = ({
 
   return (
     <div className="round-viewer-card-set-container">
-      {title}
+      <h4>{title}</h4>
       <div className="round-viewer-image-container">
         {cards.map((card: ICard) => {
-          return <CardImage onClick={() => {}} card={card} />;
+          return <CardImage key={card.rank + card.suit} card={card} />;
         })}
       </div>
+      <h4>{caption}</h4>
     </div>
   );
 };
