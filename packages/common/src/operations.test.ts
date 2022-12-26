@@ -393,7 +393,7 @@ describe("detectPokerHandResult suite", () => {
     expect(state.finalResultRanks[0]).toEqual(Rank.Two);
 
     expect(describePokerHandState(Language.English, state)).toEqual(
-      "Four of a Kind of Two"
+      "Four of a Kind of Twos"
     );
   });
 
@@ -420,7 +420,7 @@ describe("detectPokerHandResult suite", () => {
     expect(state.finalResultRanks[1]).toEqual(Rank.King);
 
     expect(describePokerHandState(Language.English, state)).toEqual(
-      "Full House of Two and King"
+      "Full House of Twos and Kings"
     );
   });
 
@@ -503,7 +503,7 @@ describe("detectPokerHandResult suite", () => {
     expect(state.finalResultRanks[0]).toEqual(Rank.Queen);
 
     expect(describePokerHandState(Language.English, state)).toEqual(
-      "Three of a Kind of Queen"
+      "Three of a Kind of Queens"
     );
   });
 
@@ -529,7 +529,7 @@ describe("detectPokerHandResult suite", () => {
     expect(state.finalResultRanks[1]).toEqual(Rank.King);
 
     expect(describePokerHandState(Language.English, state)).toEqual(
-      "Two Pair of Ace and King"
+      "Two Pair of Aces and Kings"
     );
   });
 
@@ -552,7 +552,7 @@ describe("detectPokerHandResult suite", () => {
     expect(state.finalResultRanks[0]).toEqual(Rank.Two);
 
     expect(describePokerHandState(Language.English, state)).toEqual(
-      "Pair of Two"
+      "Pair of Twos"
     );
   });
 

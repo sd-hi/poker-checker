@@ -80,7 +80,7 @@ export function describePokerHandState(
         } else {
           description += " and ";
         }
-        description += RankDescription.get(state.finalResultRanks[i]);
+        description += RankDescription.get(state.finalResultRanks[i]) + "s";
       }
       break;
     case PokerHandResult.RoyalFlush:
