@@ -1,13 +1,4 @@
-import {
-  Language,
-  Rank,
-  Suit,
-  PokerHandResult,
-  PokerWinner,
-  PokerHandResultDescription,
-  RankDescription,
-  SuitDescription,
-} from "./const";
+import { Rank, Suit, PokerHandResult, PokerWinner } from "./const";
 import { ICard } from "./classes";
 import { PokerHandState, PokerRoundState } from "./interfaces";
 
@@ -411,9 +402,7 @@ export function detectPokerHandResult_Detect_Flush(
 
   // Keep only the most commonly occurring suit
   mostFrequentSuit = getMostFrequentSuit(cards);
-  flushCards = cards.filter(
-    (card: ICard) => card.suit === mostFrequentSuit
-  );
+  flushCards = cards.filter((card: ICard) => card.suit === mostFrequentSuit);
 
   if (flushCards.length < 5) {
     // Not enough cards of same suit to give a flush
@@ -470,10 +459,7 @@ export function detectPokerHandResult_Detect_Straight(
   for (let i: number = 1; i < straightCards.length; i++) {
     if (
       Math.abs(
-        rankDifference(
-          straightCards[i - 1].rank,
-          straightCards[i].rank
-        )
+        rankDifference(straightCards[i - 1].rank, straightCards[i].rank)
       ) > 1
     ) {
       // Not consecutive cards, move straight start position along and start again

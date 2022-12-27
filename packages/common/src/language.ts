@@ -10,17 +10,70 @@ import {
 } from "./const";
 import { PokerHandState, PokerRoundState } from "./interfaces";
 
+export function describeRank(
+  // Describe a given rank as human friendly description
+  language: Language,
+  rank: Rank | null,
+  pluralize: boolean = false
+): string {
+  let description: string = "";
+  let pluralSuffix: string = "";
+
+  if (!rank) {
+    return "NULL RANK";
+  }
+
+  description = RankDescription.get(rank);
+
+  // Pluralize the rank description by adding appropriate suffix
+  if (pluralize) {
+    switch (rank) {
+      case Rank.Six:
+        pluralSuffix = "es";
+        break;
+      default:
+        pluralSuffix = "s";
+    }
+    description += pluralSuffix;
+  }
+
+  return description;
+}
+
+export function describeSuit(
+  // Describe a given suit as human friendly description
+  language: Language,
+  suit: Suit | null,
+  pluralize: boolean = false
+): string {
+  let description: string = "";
+  let pluralSuffix: string = "";
+
+  if (!suit) {
+    return "NULL SUIT";
+  }
+
+  description = SuitDescription.get(suit);
+
+  // Pluralize the suit description by adding appropriate suffix
+  if (pluralize) {
+    description += "s";
+  }
+
+  return description;
+}
+
 export function describeCard(language: Language, card: ICard | null): string {
   // Describe given card as human friendly description
   let description: string = "";
 
-  if (card === null) {
+  if (!card) {
     return "NULL CARD";
   }
 
-  description += RankDescription.get(card.rank);
+  description += describeRank(language, card.rank);
   description += " of ";
-  description += SuitDescription.get(card.suit);
+  description += describeSuit(language, card.suit);
   description += "s";
 
   return description;
@@ -58,15 +111,18 @@ export function describePokerHandState(
     case PokerHandResult.Flush:
     case PokerHandResult.StraightFlush:
       description +=
-        " of " + SuitDescription.get(state.finalResultCards[0].suit) + "s";
+        " of " +
+        describeSuit(Language.English, state.finalResultCards[0].suit, true);
     case PokerHandResult.Straight:
       // Results best described by their highest card
       description +=
-        " with high card of " + RankDescription.get(state.finalResultRanks[0]);
+        " with high card of " +
+        describeRank(Language.English, state.finalResultRanks[0]);
       break;
     case PokerHandResult.HighCard:
       // Result desribed by highest card
-      description += " of " + RankDescription.get(state.finalResultRanks[0]);
+      description +=
+        " of " + describeRank(Language.English, state.finalResultRanks[0]);
       break;
     case PokerHandResult.FourOfAKind:
     case PokerHandResult.FullHouse:
@@ -80,13 +136,18 @@ export function describePokerHandState(
         } else {
           description += " and ";
         }
-        description += RankDescription.get(state.finalResultRanks[i]) + "s";
+        description += describeRank(
+          Language.English,
+          state.finalResultRanks[i],
+          true
+        );
       }
       break;
     case PokerHandResult.RoyalFlush:
       // Results described by their suit
       description +=
-        " of " + SuitDescription.get(state.finalResultCards[0].suit) + "s";
+        " of " +
+        describeSuit(Language.English, state.finalResultCards[0].suit, true);
   }
 
   return description;
