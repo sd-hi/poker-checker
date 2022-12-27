@@ -1,6 +1,7 @@
-import { Rank, Suit, PokerHandResult, PokerWinner } from "./const";
+import { Language, Rank, Suit, PokerHandResult, PokerWinner } from "./const";
 import { ICard } from "./classes";
 import { PokerHandState, PokerRoundState } from "./interfaces";
+import { describeCard } from "./language";
 
 export function rankValue(rank: Rank, aceHigh: boolean = false): number {
   // Get value of given rank
@@ -91,6 +92,25 @@ export function removeDuplicateRankCards(
   });
 
   return uniqueCards;
+}
+
+export function getDuplicateCard(cards: Array<ICard>): ICard | null {
+  // Return the card that is duplicated in a given array of cards
+  let duplicateCard: ICard | null = null;
+
+  // Count how many times each card occurs in array
+  cards.forEach((checkCard) => {
+    if (
+      cards.filter((card) => {
+        return card.rank === checkCard.rank && card.suit === checkCard.suit;
+      }).length > 1
+    ) {
+      // Found a card that occurs more than once, return it
+      duplicateCard = checkCard;
+    }
+  });
+
+  return duplicateCard;
 }
 
 export function getHighestRank(

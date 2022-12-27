@@ -20,6 +20,7 @@ import {
   rankValue,
   removeDuplicateRankCards,
   identifyPokerWinner,
+  getDuplicateCard,
 } from "./operations";
 
 describe("rankValue suite", () => {
@@ -63,9 +64,40 @@ describe("rankValue suite", () => {
   }
 });
 
-describe("getHighestRank suite", () => {
+describe("getDuplicateCard suite", () => {
   let cards: Array<ICard>;
+  let duplicateCard: ICard | null;
 
+  // Test without duplicates
+  cards = [
+    cardObject(Suit.Club, Rank.Ace),
+    cardObject(Suit.Diamond, Rank.Ace),
+    cardObject(Suit.Club, Rank.Five),
+    cardObject(Suit.Diamond, Rank.Seven),
+    cardObject(Suit.Heart, Rank.Nine),
+    cardObject(Suit.Heart, Rank.Jack),
+    cardObject(Suit.Heart, Rank.King),
+  ];
+  duplicateCard = getDuplicateCard(cards);
+  expect(duplicateCard).toBeNull();
+
+  // Test with duplicates (seven of diamond)
+  cards = [
+    cardObject(Suit.Club, Rank.Ace),
+    cardObject(Suit.Diamond, Rank.Ace),
+    cardObject(Suit.Club, Rank.Five),
+    cardObject(Suit.Diamond, Rank.Seven),
+    cardObject(Suit.Heart, Rank.Nine),
+    cardObject(Suit.Diamond, Rank.Seven),
+    cardObject(Suit.Heart, Rank.King),
+  ];
+  duplicateCard = getDuplicateCard(cards);
+  expect(duplicateCard).not.toBeNull();
+  expect(duplicateCard.rank).toBe(Rank.Seven);
+  expect(duplicateCard.suit).toBe(Suit.Diamond);
+});
+
+describe("getHighestRank suite", () => {
   testGetHighestRank([], Rank.None);
   testGetHighestRank([Rank.Two], Rank.Two);
   testGetHighestRank([Rank.Two, Rank.Three], Rank.Three);
@@ -126,7 +158,9 @@ describe("getMostFrequentRank suit", () => {
   });
 
   test("single card", () => {
-    expect(getMostFrequentRank([cardObject(Suit.Club, Rank.Ace)])).toBe(Rank.Ace);
+    expect(getMostFrequentRank([cardObject(Suit.Club, Rank.Ace)])).toBe(
+      Rank.Ace
+    );
   });
 
   test("multiple cards", () => {
@@ -1138,7 +1172,10 @@ describe("identifyPokerWinner suite", () => {
       cardObject(Suit.Club, Rank.Six),
       cardObject(Suit.Club, Rank.Seven),
     ];
-    handCardsB = [cardObject(Suit.Club, Rank.Ace), cardObject(Suit.Club, Rank.Two)];
+    handCardsB = [
+      cardObject(Suit.Club, Rank.Ace),
+      cardObject(Suit.Club, Rank.Two),
+    ];
     identifyPokerWinner(roundState, riverCards, handCardsA, handCardsB);
     expect(roundState.winner).toBe(PokerWinner.HandA);
     expect(roundState.handStateA.finalResult).toBe(

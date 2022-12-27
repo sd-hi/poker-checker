@@ -7,12 +7,15 @@ import RoundResult, {
 } from "../../resources/roundresult/roundresult.interface";
 import {
   cardObject,
+  describeCard,
+  getDuplicateCard,
   identifyPokerWinner,
   initializePokerRoundState,
   PokerRoundState,
 } from "@poker-checker/common";
-import { ICard } from "@poker-checker/common";
+import { ICard, Language } from "@poker-checker/common";
 import { read } from "fs";
+import { InputHandler } from "concurrently";
 
 class RoundResultService {
   private roundResult = RoundResultModel;
@@ -27,6 +30,7 @@ class RoundResultService {
     let riverCards: Array<ICard>;
     let handCardsA: Array<ICard>;
     let handCardsB: Array<ICard>;
+    let duplicateCard: ICard | null;
     let roundResultEntry: RoundResultEntry = {} as RoundResultEntry;
     let responsePayload: RoundResultPostResponsePayload =
       {} as RoundResultPostResponsePayload;
@@ -42,6 +46,18 @@ class RoundResultService {
     handCardsB = requestBody.playerB.cards.map((card) =>
       cardObject(card.suit, card.rank)
     );
+
+    // Check for any duplicate cards
+    duplicateCard = getDuplicateCard(
+      riverCards.concat(handCardsA).concat(handCardsB)
+    );
+    if (duplicateCard) {
+      throw new Error(
+        "Card " +
+          describeCard(Language.English, duplicateCard) +
+          " cannot occur more than once."
+      );
+    }
 
     // Calculate the outcome of the round
     identifyPokerWinner(roundState, riverCards, handCardsA, handCardsB);
