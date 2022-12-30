@@ -1,5 +1,6 @@
 import React from "react";
 import { postRoundResult } from "../../api/roundresult";
+import { AlertBoxLevel } from "../shared/alertbox";
 import {
   IRoundData,
   roundDataClearCards,
@@ -11,16 +12,23 @@ export interface IHandEntryButtonBarProps {
   roundData: IRoundData;
   setRoundData: (roundData: IRoundData) => void;
   openRoundViewer: (roundResultId: string) => void;
+  showAlertBox: (level: AlertBoxLevel, message: string) => void;
+  hideAlertBox: () => void;
 }
 
 const HandEntryButtonBar = ({
   roundData,
-  setRoundData,
+  hideAlertBox,
   openRoundViewer,
+  setRoundData,
+  showAlertBox,
 }: IHandEntryButtonBarProps) => {
   // Bar with functions
 
   const handleSubmitRoundResult = (): void => {
+    // Clear any prior error message
+    hideAlertBox();
+
     // Submit round result to API
     postRoundResult(roundData)
       .then((roundResultId) => {
@@ -28,7 +36,9 @@ const HandEntryButtonBar = ({
         console.log("Opening round viewer with ID " + roundResultId);
         openRoundViewer(roundResultId);
       })
-      .catch((reason) => console.log(reason));
+      .catch((reason) => {
+        showAlertBox(AlertBoxLevel.Error, reason.message);
+      });
   };
 
   const handleButtonClear = () => {
@@ -36,6 +46,7 @@ const HandEntryButtonBar = ({
     let newRoundData: IRoundData = roundDataCopy(roundData);
     roundDataClearCards(newRoundData);
     setRoundData(newRoundData);
+    hideAlertBox();
   };
 
   const handleButtonRandom = () => {
@@ -43,6 +54,7 @@ const HandEntryButtonBar = ({
     let newRoundData: IRoundData = roundDataCopy(roundData);
     roundDataRandomizeCards(newRoundData);
     setRoundData(newRoundData);
+    hideAlertBox();
   };
 
   return (
@@ -53,7 +65,6 @@ const HandEntryButtonBar = ({
       <button className="btn btn-secondary" onClick={handleButtonClear}>
         Clear
       </button>
-      <button className="btn btn-secondary">Undo</button>
       <button className="btn btn-secondary" onClick={handleButtonRandom}>
         Random
       </button>

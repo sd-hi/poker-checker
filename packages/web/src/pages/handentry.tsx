@@ -18,9 +18,20 @@ import { HandId } from "../components/shared/constants";
 import RoundViewer, {
   IRoundViewerProps,
 } from "../components/shared/roundviewer";
+import AlertBox, {
+  AlertBoxLevel,
+  AlertBoxProps,
+} from "../components/shared/alertbox";
+import { Alert } from "react-bootstrap";
 
 const HandEntry = () => {
   const [roundData, setRoundData] = useState<IRoundData>(initialRoundData);
+  const [alertBoxProps, setAlertBoxProps] = useState<AlertBoxProps>({
+    isVisible: false,
+    level: AlertBoxLevel.Info,
+    message: "",
+    hideAlert: () => {},
+  });
   const [chooserProps, setChooserProps] = useState<ICardChooserProps>({
     closeChooser: () => {},
     openChooser: () => {},
@@ -40,6 +51,22 @@ const HandEntry = () => {
     isVisible: false,
     roundResultId: "",
   });
+
+  const showAlertBox = (level: AlertBoxLevel, message: string): void => {
+    setAlertBoxProps({
+      ...alertBoxProps,
+      isVisible: true,
+      level: level,
+      message: message,
+    });
+  };
+
+  const hideAlertBox = () => {
+    setAlertBoxProps({
+      ...alertBoxProps,
+      isVisible: false,
+    });
+  };
 
   const closeChooser = (): void => {
     // Close hand entry card chooser dialog
@@ -81,6 +108,7 @@ const HandEntry = () => {
   return (
     <main>
       <NavigationBar />
+      <AlertBox {...alertBoxProps} hideAlert={hideAlertBox} />
       <main className="main-container">
         <div className="card-sets-container">
           {roundData.hands.map((hand: IHandData) => {
@@ -108,9 +136,11 @@ const HandEntry = () => {
       />
       <RoundViewer {...roundViewerProps} closeRoundViewer={closeRoundViewer} />
       <HandEntryButtonBar
+        hideAlertBox={hideAlertBox}
+        openRoundViewer={openRoundViewer}
         roundData={roundData}
         setRoundData={setRoundData}
-        openRoundViewer={openRoundViewer}
+        showAlertBox={showAlertBox}
       />
     </main>
   );

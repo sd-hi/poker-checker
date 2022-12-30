@@ -12,6 +12,8 @@ import {
   identifyPokerWinner,
   initializePokerRoundState,
   PokerRoundState,
+  Rank,
+  Suit,
 } from "@poker-checker/common";
 import { ICard, Language } from "@poker-checker/common";
 import { read } from "fs";
@@ -30,6 +32,7 @@ class RoundResultService {
     let riverCards: Array<ICard>;
     let handCardsA: Array<ICard>;
     let handCardsB: Array<ICard>;
+    let allCards: Array<ICard>;
     let duplicateCard: ICard | null;
     let roundResultEntry: RoundResultEntry = {} as RoundResultEntry;
     let responsePayload: RoundResultPostResponsePayload =
@@ -47,10 +50,17 @@ class RoundResultService {
       cardObject(card.suit, card.rank)
     );
 
+    allCards = riverCards.concat(handCardsA).concat(handCardsB);
+
+    // Check for any empty slots
+    allCards.forEach((card) => {
+      if (card.rank === Rank.None || card.suit === Suit.None) {
+        throw new Error("All card slots must be populated");
+      }
+    });
+
     // Check for any duplicate cards
-    duplicateCard = getDuplicateCard(
-      riverCards.concat(handCardsA).concat(handCardsB)
-    );
+    duplicateCard = getDuplicateCard(allCards);
     if (duplicateCard) {
       throw new Error(
         "Card " +

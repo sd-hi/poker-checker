@@ -112,9 +112,6 @@ const RoundViewer: React.FC<IRoundViewerProps> = ({
   const resultsStyle = (roundResult: RoundResult, player: Player): React.CSSProperties => {
     // Return styling of given player's result container
     let winStatus = calculatePlayerWinStatus(roundResult, player);
-
-    console.log(Player[player])
-    console.log(PlayerWinStatus[winStatus])
     
     switch (winStatus) {
       case PlayerWinStatus.Win:

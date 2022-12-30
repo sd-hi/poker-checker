@@ -4,7 +4,10 @@ import {
   roundDataGetHand,
 } from "../components/shared/rounddata";
 import { HandId } from "../components/shared/constants";
-import { RoundResultPostRequestPayload, RoundResultPostResponsePayload } from "@poker-checker/server";
+import {
+  RoundResultPostRequestPayload,
+  RoundResultPostResponsePayload,
+} from "@poker-checker/server";
 import { RoundResultGetResponsePayload } from "@poker-checker/server";
 
 export async function getRoundResult(
@@ -25,11 +28,14 @@ export async function getRoundResult(
     return responsePayload;
   } catch (error) {
     console.log(error);
+    console.log("ERROR TRIGGERED");
   }
 }
 
 export async function postRoundResult(roundData: IRoundData): Promise<string> {
   // Submit round result to roundresult interface
+  let responsePayload;
+  let responseText: string;
 
   // Build payload to submit
   const requestPayload: RoundResultPostRequestPayload | undefined =
@@ -43,13 +49,23 @@ export async function postRoundResult(roundData: IRoundData): Promise<string> {
       "Content-Type": "application/json",
     },
     body: JSON.stringify(requestPayload),
+  }).catch((error) => {
+    throw new Error(error);
   });
 
-  // Get response JSON
-  const responsePayload: RoundResultPostResponsePayload = await response.json();
+  if (!response) {
+    return "";
+  }
 
-  // Return round result ID created
-  return responsePayload.id;
+  // Parse JSON payload
+  responsePayload = await response.json();
+  if (response.ok) {
+    // Return round result ID created
+    return responsePayload.id;
+  } else {
+    // Failed request, return error from API
+    throw new Error(responsePayload.message);
+  }
 }
 
 function postRoundResult_BuildRequestPayLoad(
