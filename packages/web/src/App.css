@@ -166,6 +166,19 @@
 
 /* Round Viewer */
 
+.round-viewer-card-set-container {
+  border-radius: 5px;
+}
+
+.round-viewer-card-set-container h4 {
+  font-weight: bold;
+}
+
+.round-viewer-heading {
+  border-radius: 5px;
+  text-align: center;
+}
+
 .round-viewer-image-container .card-image {
   max-width: 20%;
   padding: 5px;
@@ -183,6 +196,12 @@
   width: 90%;
 }
 
+.round-viewer-modal-body {
+  display: grid;
+  gap: 4px;
+  grid-template-columns: 1fr;
+}
+
 .round-viewer-results-container {
   align-items: center;
   display: grid;
@@ -191,9 +210,15 @@
   text-align: center;
 }
 
-.round-viewer-heading {
-  background-color: palegoldenrod;
+.round-viewer-title {
   text-align: center;
+}
+
+.round-viewer-card-set-title {
+  background-color: rgba(255, 255, 255, 0.5);
+  border-radius: 5px;
+  margin: 4px;
+  padding: 2px;
 }
 
 /* Button Bar */

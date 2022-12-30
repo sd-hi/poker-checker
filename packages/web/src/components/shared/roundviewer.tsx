@@ -128,10 +128,7 @@ const RoundViewer: React.FC<IRoundViewerProps> = ({
   if (roundResult) {
 
     modalBody = (
-      <div>
-        <div className="round-viewer-heading">
-          <h1>{describeRoundResultWinner(roundResult)}</h1>
-        </div>
+      <div className="round-viewer-modal-body">
         <div className="round-viewer-heading">
           <h2>Results</h2>
         </div>
@@ -197,8 +194,8 @@ const RoundViewer: React.FC<IRoundViewerProps> = ({
         dialogClassName="round-viewer-modal"
         onHide={handleClose}
       >
-        <Modal.Header>
-          <Modal.Title>{title}</Modal.Title>
+        <Modal.Header closeButton>
+          <Modal.Title><h1>{roundResult && describeRoundResultWinner(roundResult)}</h1></Modal.Title>
         </Modal.Header>
 
         <Modal.Body>{modalBody}</Modal.Body>
@@ -236,7 +233,7 @@ const RoundViewerCardSet = ({
 
   return (
     <div className="round-viewer-card-set-container">
-      <h4>{title}</h4>
+      <h4 className="round-viewer-card-set-title">{title}</h4>
       <div className="round-viewer-image-container">
         {cards.map((card: ICard) => {
           return <CardImage key={card.rank + card.suit} card={card} />;
