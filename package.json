@@ -15,9 +15,11 @@
     "packages/*"
   ],
   "devDependencies": {
-    "lerna": "^4.0.0"
+    "lerna": "^6.3.0"
   },
   "dependencies": {
-    "concurrently": "^7.1.0"
+    "bcrypt": "^5.1.0",
+    "concurrently": "^7.6.0",
+    "jsonwebtoken": "^9.0.0"
   }
 }

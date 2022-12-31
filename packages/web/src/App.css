@@ -1,23 +1,23 @@
 :root {
   background-color: black;
-  background-image: url("../public/images/table/PokerFelt80.png");
+  background-image: url("images/table/PokerFelt80.png");
   --transition: all 0.3s linear;
 }
 
 .App {
-  background-image: url("../public/images/table/PokerFelt80.png");
+  background-image: url("images/table/PokerFelt80.png");
   text-align: center;
 }
 
 .main-container {
-  background-image: url("../public/images/table/PokerFelt80.png");
+  background-image: url("images/table/PokerFelt80.png");
   display: flex;
   justify-content: center;
 }
 
 .card-sets-container {
   background-color: black;
-  background-image: url("../public/images/table/PokerFelt80.png");
+  background-image: url("images/table/PokerFelt80.png");
   display: grid;
   gap: 4px 4px;
   grid-template-rows: repeat(3, 1fr);
@@ -28,7 +28,7 @@
 
 .card-set-container {
   align-items: center;
-  background-image: url("../public/images/table/PokerFelt80.png");
+  background-image: url("images/table/PokerFelt80.png");
   background-repeat: repeat;
   border-color: rgba(223, 153, 2, 0.6);
   border-radius: 5px;
@@ -40,7 +40,7 @@
 
 .card-set-title {
   background-clip: content-box;
-  background-image: url("../public/images/table/PokerFelt80.png");
+  background-image: url("images/table/PokerFelt80.png");
   color: white;
   font-family: "Times New Roman", Times, serif;
   font-variant: small-caps;
@@ -207,10 +207,6 @@
   display: grid;
   gap: 5px;
   grid-template-rows: repeat(2, 1fr);
-  text-align: center;
-}
-
-.round-viewer-title {
   text-align: center;
 }
 

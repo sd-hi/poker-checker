@@ -43,17 +43,15 @@ const AlertBox: React.FC<AlertBoxProps> = ({
   // Alert modal
 
   return (
-    <>
-      <Alert
-        key={alertLeveltoVariant(level)}
-        variant={alertLeveltoVariant(level)}
-        onClose={() => hideAlert()}
-        show={isVisible}
-        dismissible
-      >
-        {message}
-      </Alert>
-    </>
+    <Alert
+      key={alertLeveltoVariant(level)}
+      variant={alertLeveltoVariant(level)}
+      onClose={() => hideAlert()}
+      show={isVisible}
+      dismissible
+    >
+      {message}
+    </Alert>
   );
 };
 
