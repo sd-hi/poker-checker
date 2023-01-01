@@ -4,6 +4,8 @@
 
 Poker Checker allows you to determine the winner of a given poker round.
 
+https://user-images.githubusercontent.com/96883126/210183202-e278e5ae-d431-41e6-aa5c-fe17fcb93061.mp4
+
 Features include:
 * Intuitive UI to input your final cards
 * Ability to customize player names
