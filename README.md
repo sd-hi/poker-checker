@@ -13,9 +13,8 @@ Features include:
 
 ### Screenshots and videos
 
-![localhost_3000_(Pixel 5)](https://user-images.githubusercontent.com/96883126/210183387-bd166308-a9cd-4e2a-becc-ddfcf9456825.png)
-![localhost_3000_(Pixel 5) (1)](https://user-images.githubusercontent.com/96883126/210183390-907b9764-af3b-47f6-979d-0d2603c9a194.png)
-
+![HandEntry_Small](https://user-images.githubusercontent.com/96883126/210183453-44f4dffc-4b8a-484f-a17b-3c46b03822ee.png)
+![RoundViewer_Small](https://user-images.githubusercontent.com/96883126/210183454-a16797a2-21b6-4633-a92d-25eb2e77a654.png)
 
 https://user-images.githubusercontent.com/96883126/210183202-e278e5ae-d431-41e6-aa5c-fe17fcb93061.mp4
 
