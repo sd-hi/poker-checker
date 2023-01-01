@@ -162,24 +162,18 @@ const RoundViewer: React.FC<IRoundViewerProps> = ({
           </div>
         </div>
         <div className="round-viewer-inputs-container round-viewer-info">
-          <div className="round-viewer-card-set-container">
-            <RoundViewerCardSet
-              payloadCards={roundResult.input.river.cards}
-              title="River"
-            ></RoundViewerCardSet>
-          </div>
-          <div className="round-viewer-card-set-container">
-            <RoundViewerCardSet
-              payloadCards={roundResult.input.playerA.cards}
-              title={roundResult.input.playerA.name}
-            ></RoundViewerCardSet>
-          </div>
-          <div className="round-viewer-card-set-container">
-            <RoundViewerCardSet
-              payloadCards={roundResult.input.playerB.cards}
-              title={roundResult.input.playerB.name}
-            ></RoundViewerCardSet>
-          </div>
+          <RoundViewerCardSet
+            payloadCards={roundResult.input.river.cards}
+            title="River"
+          ></RoundViewerCardSet>
+          <RoundViewerCardSet
+            payloadCards={roundResult.input.playerA.cards}
+            title={roundResult.input.playerA.name}
+          ></RoundViewerCardSet>
+          <RoundViewerCardSet
+            payloadCards={roundResult.input.playerB.cards}
+            title={roundResult.input.playerB.name}
+          ></RoundViewerCardSet>
         </div>
       </div>
     );
@@ -218,6 +212,26 @@ const RoundViewer: React.FC<IRoundViewerProps> = ({
 
 // Round viewer card set is a group of cards to be displayed in the viewer
 
+interface IRoundViewerCardImageSetProps {
+  payloadCards: Array<RoundResultPayloadCard>;
+}
+
+const RoundViewerCardImageSet = ({
+  payloadCards,
+}: IRoundViewerCardImageSetProps) => {
+  let cards = payloadCards.map((payloadCard) => {
+    return cardObject(payloadCard.suit, payloadCard.rank);
+  });
+
+  return (
+    <div className="round-viewer-image-container">
+      {cards.map((card: ICard) => {
+        return <CardImage key={card.rank + card.suit} card={card} />;
+      })}
+    </div>
+  );
+};
+
 interface IRoundViewerCardSetProps {
   payloadCards: Array<RoundResultPayloadCard>;
   title: string;
@@ -234,19 +248,13 @@ const RoundViewerCardSet = ({
     return <></>;
   }
 
-  let cards = payloadCards.map((payloadCard) => {
-    return cardObject(payloadCard.suit, payloadCard.rank);
-  });
-
   return (
     <div className="round-viewer-card-set-container">
-      <h4 className="round-viewer-card-set-title">{title}</h4>
-      <div className="round-viewer-image-container">
-        {cards.map((card: ICard) => {
-          return <CardImage key={card.rank + card.suit} card={card} />;
-        })}
+      <div className="round-viewer-card-set-title">
+        <h4>{title}</h4>
       </div>
-      <h4>{caption}</h4>
+      <RoundViewerCardImageSet payloadCards={payloadCards} />
+      {caption && <h4>{caption}</h4>}
     </div>
   );
 };

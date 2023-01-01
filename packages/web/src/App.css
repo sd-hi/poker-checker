@@ -167,6 +167,7 @@
 /* Round Viewer */
 
 .round-viewer-card-set-container {
+  display: grid;
   border-radius: 5px;
 }
 
@@ -189,11 +190,35 @@
 }
 
 .round-viewer-inputs-container {
+  border-radius: 5px;
   display: grid;
   grid-auto-flow: column;
-  grid-template-columns: auto;
-  grid-template-rows: 1fr;
+  grid-gap: 4px;
+  grid-template-columns: 1fr;
+  grid-template-rows: 1fr 1fr 1fr;
+  padding-bottom: 4px;
+  padding-top: 4px;
   text-align: center;
+}
+
+.round-viewer-inputs-container .round-viewer-card-set-container {
+  background-color: rgba(255, 255, 255, 0.5);
+  display: grid;
+  margin-left: 4px;
+  margin-right: 4px;
+  grid-auto-flow: column;
+  grid-template-columns: 1fr 1fr 1fr;
+}
+
+.round-viewer-inputs-container .round-viewer-card-set-title {
+  align-items: center;
+  display: flex;
+  grid-column: 1;
+  justify-content: center;
+}
+
+.round-viewer-inputs-container .round-viewer-image-container {
+  grid-column: 2/4;
 }
 
 .round-viewer-modal-body {
@@ -213,8 +238,10 @@
 .round-viewer-card-set-title {
   background-color: rgba(255, 255, 255, 0.5);
   border-radius: 5px;
+  grid-column: 1;
   margin: 4px;
   padding: 2px;
+  text-align: center;
 }
 
 .round-viewer-win {
