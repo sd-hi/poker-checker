@@ -38,7 +38,6 @@ const RoundViewer: React.FC<IRoundViewerProps> = ({
   closeRoundViewer,
   roundResultId,
 }: IRoundViewerProps) => {
-  const [title, setTitle] = useState<string>("");
   const [roundResult, setRoundResult] = useState<RoundResult | null>(null);
   const [status, setStatus] = useState<RoundViewerStatus>(
     RoundViewerStatus.Loading
@@ -56,7 +55,7 @@ const RoundViewer: React.FC<IRoundViewerProps> = ({
     // Text to describe winner of round result
     if (roundResult.outcome.winner === PokerWinner.HandA) {
       return `${roundResult.input.playerA.name} won!`;
-    } else if ((roundResult.outcome.winner === PokerWinner.HandB)) {
+    } else if (roundResult.outcome.winner === PokerWinner.HandB) {
       return `${roundResult.input.playerB.name} won!`;
     } else {
       return "Round was a draw";
@@ -109,31 +108,35 @@ const RoundViewer: React.FC<IRoundViewerProps> = ({
     }
   };
 
-  const resultsStyle = (roundResult: RoundResult, player: Player): React.CSSProperties => {
-    // Return styling of given player's result container
+  const getResultsClassName = (
+    roundResult: RoundResult,
+    player: Player
+  ): string => {
+    // Return styling class of given player's result container
+    let className = "round-viewer-card-set-container";
     let winStatus = calculatePlayerWinStatus(roundResult, player);
-    
+
     switch (winStatus) {
       case PlayerWinStatus.Win:
-        return {backgroundColor: "lightgreen"};
+        className += " round-viewer-win";
+        break;
       case PlayerWinStatus.Loss:
-        return {backgroundColor: "lightpink"};
+        className += " round-viewer-loss";
+        break;
       default:
-        return {backgroundColor: "lightgray"};
+        className += " round-viewer-draw";
     }
+
+    return className;
   };
 
   let modalBody;
 
   if (roundResult) {
-
     modalBody = (
       <div className="round-viewer-modal-body">
-        <div className="round-viewer-heading">
-          <h2>Results</h2>
-        </div>
         <div className="round-viewer-results-container">
-          <div className="round-viewer-card-set-container" style={resultsStyle(roundResult, Player.PlayerA)}>
+          <div className={getResultsClassName(roundResult, Player.PlayerA)}>
             <RoundViewerCardSet
               payloadCards={roundResult.outcome.handStateA.finalResultCards.concat(
                 roundResult.outcome.handStateA.finalResultTieBreakCards
@@ -145,7 +148,7 @@ const RoundViewer: React.FC<IRoundViewerProps> = ({
               )}
             ></RoundViewerCardSet>
           </div>
-          <div className="round-viewer-card-set-container" style={resultsStyle(roundResult, Player.PlayerB)}>
+          <div className={getResultsClassName(roundResult, Player.PlayerB)}>
             <RoundViewerCardSet
               payloadCards={roundResult.outcome.handStateB.finalResultCards.concat(
                 roundResult.outcome.handStateB.finalResultTieBreakCards
@@ -158,10 +161,7 @@ const RoundViewer: React.FC<IRoundViewerProps> = ({
             ></RoundViewerCardSet>
           </div>
         </div>
-        <div className="round-viewer-heading">
-          <h2>Inputs</h2>
-        </div>
-        <div className="round-viewer-inputs-container">
+        <div className="round-viewer-inputs-container round-viewer-info">
           <div className="round-viewer-card-set-container">
             <RoundViewerCardSet
               payloadCards={roundResult.input.river.cards}
@@ -184,7 +184,11 @@ const RoundViewer: React.FC<IRoundViewerProps> = ({
       </div>
     );
   } else {
-    modalBody = <h1>No data</h1>;
+    if (status === RoundViewerStatus.Loading) {
+      modalBody = <h1>Loading...</h1>;
+    } else {
+      modalBody = <h1>No data</h1>;
+    }
   }
 
   return (
@@ -195,7 +199,9 @@ const RoundViewer: React.FC<IRoundViewerProps> = ({
         onHide={handleClose}
       >
         <Modal.Header closeButton>
-          <Modal.Title><h1>{roundResult && describeRoundResultWinner(roundResult)}</h1></Modal.Title>
+          <Modal.Title>
+            <h1>{roundResult && describeRoundResultWinner(roundResult)}</h1>
+          </Modal.Title>
         </Modal.Header>
 
         <Modal.Body>{modalBody}</Modal.Body>
@@ -216,6 +222,7 @@ interface IRoundViewerCardSetProps {
   payloadCards: Array<RoundResultPayloadCard>;
   title: string;
   caption?: string;
+  small?: boolean;
 }
 
 const RoundViewerCardSet = ({

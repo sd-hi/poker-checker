@@ -1,4 +1,4 @@
-import { ICard, Rank, Suit, cardObject, CardShoe } from "@poker-checker/common";
+import { ICard, Rank, Suit, CardShoe } from "@poker-checker/common";
 import { HandId } from "./constants";
 
 export interface ICardSlotData {

@@ -6,7 +6,6 @@ import {
 import { HandId } from "../components/shared/constants";
 import {
   RoundResultPostRequestPayload,
-  RoundResultPostResponsePayload,
 } from "@poker-checker/server";
 import { RoundResultGetResponsePayload } from "@poker-checker/server";
 
@@ -35,7 +34,6 @@ export async function getRoundResult(
 export async function postRoundResult(roundData: IRoundData): Promise<string> {
   // Submit round result to roundresult interface
   let responsePayload;
-  let responseText: string;
 
   // Build payload to submit
   const requestPayload: RoundResultPostRequestPayload | undefined =

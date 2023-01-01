@@ -22,7 +22,6 @@ import AlertBox, {
   AlertBoxLevel,
   AlertBoxProps,
 } from "../components/shared/alertbox";
-import { Alert } from "react-bootstrap";
 
 const HandEntry = () => {
   const [roundData, setRoundData] = useState<IRoundData>(initialRoundData);
