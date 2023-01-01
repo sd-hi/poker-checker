@@ -11,7 +11,11 @@ Features include:
 * Ability to customize player names
 * Round results saved to a database
 
-### Screenshots
+### Screenshots and videos
+
+![localhost_3000_(Pixel 5)](https://user-images.githubusercontent.com/96883126/210183387-bd166308-a9cd-4e2a-becc-ddfcf9456825.png)
+![localhost_3000_(Pixel 5) (1)](https://user-images.githubusercontent.com/96883126/210183390-907b9764-af3b-47f6-979d-0d2603c9a194.png)
+
 
 https://user-images.githubusercontent.com/96883126/210183202-e278e5ae-d431-41e6-aa5c-fe17fcb93061.mp4
 
