@@ -5,7 +5,6 @@ import validationMiddleware from '../../middleware/validation.middleware';
 import validate from '../../resources/user/user.validation';
 import UserService from '../../resources/user/user.service';
 import authenticatedMiddleware from '../../middleware/authenticated.middleware';
-import { nextTick } from 'process';
 
 class UserController implements Controller {
     public path = '/users';

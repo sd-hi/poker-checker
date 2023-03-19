@@ -8,7 +8,7 @@ const UserSchema = new Schema(
             type: String,
             required: true,
             unique: true, // Users will be uniquely keyed by email address
-            trim: true, // Trim whitespace (for comparison protection etc.)
+            trim: true, // Trim whitespace (protection if user enters email with whitespace)
         },
 
         name: {

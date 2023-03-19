@@ -33,7 +33,7 @@ async function authenticatedMiddleware(
         }
 
         const user = await UserModel.findById(payload.id)
-            .select('-password')
+            .select('-password') // Exclude password from returned data
             .exec();
 
         if (!user) {
