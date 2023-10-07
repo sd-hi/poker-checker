@@ -458,6 +458,33 @@ describe("detectPokerHandResult suite", () => {
     );
   });
 
+  test("full house, with pair split between river and hand", () => {
+    cards = [
+      cardObject(Suit.Heart, Rank.Jack),
+      cardObject(Suit.Spade, Rank.Queen),
+      cardObject(Suit.Diamond, Rank.Queen),
+      cardObject(Suit.Club, Rank.Jack),
+      cardObject(Suit.Spade, Rank.Five),
+      cardObject(Suit.Club, Rank.Queen),
+      cardObject(Suit.Diamond, Rank.Jack),
+    ];
+    state = initializePokerHandState();
+    detectPokerHandResult(state, cards);
+    expect(state.finalResult).toEqual(PokerHandResult.FullHouse);
+    expect(state.finalResultCards[0].rank).toEqual(Rank.Queen);
+    expect(state.finalResultCards[1].rank).toEqual(Rank.Queen);
+    expect(state.finalResultCards[2].rank).toEqual(Rank.Queen);
+    expect(state.finalResultCards[3].rank).toEqual(Rank.Jack);
+    expect(state.finalResultCards[4].rank).toEqual(Rank.Jack);
+    expect(state.finalResultRanks.length).toEqual(2);
+    expect(state.finalResultRanks[0]).toEqual(Rank.Queen);
+    expect(state.finalResultRanks[1]).toEqual(Rank.Jack);
+
+    expect(describePokerHandState(Language.English, state)).toEqual(
+      "Full House of Queens and Jacks"
+    );
+  });
+
   test("flush, with non-suited straight", () => {
     cards = [
       cardObject(Suit.Spade, Rank.Ace),
