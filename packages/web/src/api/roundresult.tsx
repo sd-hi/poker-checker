@@ -4,10 +4,11 @@ import {
   roundDataGetHand,
 } from "../components/shared/rounddata";
 import { HandId } from "../components/shared/constants";
+import { RoundResultPostRequestPayload } from "@poker-checker/server";
 import {
-  RoundResultPostRequestPayload,
+  RoundHistoryGetResponsePayload,
+  RoundResultGetResponsePayload,
 } from "@poker-checker/server";
-import { RoundResultGetResponsePayload } from "@poker-checker/server";
 
 export async function getRoundResult(
   roundResultId: string
@@ -27,7 +28,27 @@ export async function getRoundResult(
     return responsePayload;
   } catch (error) {
     console.log(error);
-    console.log("ERROR TRIGGERED");
+  }
+}
+
+export async function getRoundResultHistory(
+  pageNo: number
+): Promise<RoundHistoryGetResponsePayload | undefined> {
+  // Request API for given page of round results
+
+  try {
+    const response = await fetch(`/api/roundhistory?${pageNo}`, {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    });
+    const responsePayload: RoundHistoryGetResponsePayload =
+      await response.json();
+    return responsePayload;
+  } catch (error) {
+    console.log(error);
   }
 }
 
